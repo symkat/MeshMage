@@ -1,0 +1,49 @@
+%%  cascade _base { title => "Configure Node",
+%%      sb_active => 'deploy_manual'
+%%  }
+
+%% override panel -> {
+
+    <table style="margin-top: 2em" class="table">
+        <thead>
+            <tr>
+                <th>Hostname</th>
+                <th>Network</th>
+                <th>Nebula IP</th>
+                <th>Public IP</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>[% $node.hostname %]</td>
+                <td>[% $node.network.name %]</td>
+                <td>[% $node.nebula_ip %]</td>
+                <td>[% $node.public_ip %]</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 style="margin-top: 1.5em" class="h2">Configuration Files</h2>
+    
+    
+    <div class="mb-3">
+        <label for="ca_crt">ca.crt</label>
+        <textarea disabled class="form-control" id="ca_crt" name="ca_crt" rows="7">[% $ca %]</textarea>
+    </div>
+
+    <div class="mb-3">
+        <label for="domain_crt">[% $node.hostname %].crt</label>
+        <textarea disabled class="form-control" id="domain_crt" name="domain_crt" rows="7">[% $cert %]</textarea>
+    </div>
+
+    <div class="mb-3">
+        <label for="domain_key">[% $node.hostname %].key</label>
+        <textarea disabled class="form-control" id="domain_key" name="domain_key" rows="5">[% $key %]</textarea>
+    </div>
+    
+    <div class="mb-3">
+        <label for="config_yml">config.yml</label>
+        <textarea disabled class="form-control" id="config_yml" name="config_yml" rows="60">[% $conf %]</textarea>
+    </div>
+
+%% }

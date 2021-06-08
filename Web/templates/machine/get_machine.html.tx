@@ -1,0 +1,87 @@
+%%  cascade _base { title => "View Machine",
+%%      sb_active => 'machine'
+%%  }
+
+%% override panel -> {
+    <h1>Information on [% $machine.hostname %]</h1>
+    <hr />
+    <h2>Machine Status</h2>
+
+    <table border="1" width="50%">
+        <tr>
+            <th>Check</th>
+            <th>Status</th>
+            <th>Last Success</th>
+            <th>Last Failure</th>
+        <tr>
+            <th>Nebula Network</th>
+            <td>Connected</td>
+            <td>1 hour ago</td>
+            <td>24 days ago</td>
+        </tr>
+        <tr>
+            <th>Public Network</th>
+            <td>Connected</td>
+            <td>1 hour ago</td>
+            <td>24 days ago</td>
+        </tr>
+        <tr>
+            <th>Shell Access</th>
+            <td>Online</td>
+            <td>32 minutes ago</td>
+            <td>4 days ago</td>
+        </tr>
+    </table>
+    
+    <h2>Machine Actions</h2>
+
+    <ul>
+        <li>Initialize Machine</li>
+        <li>Join machine to Nebula Network</li>
+        <li>Run Script</li>
+    </ul>
+    
+    <h2>Machine Settings</h2>
+
+    <table border="1" width="50%">
+        <tr>
+            <th>Hostname</th>
+            <th>Nebula IP</th>
+            <th>Public IP</th>
+        </tr>
+        <tr>
+            <td>[% $machine.hostname %]</td>
+            <td>[% $machine.nebula_ip %]</td>
+            <td>[% $machine.public_ip %]</td>
+        </tr>
+    </table>
+
+    <h2>Machine Attributes</h2>
+
+    <table border="1" width="50%">
+        <tr>
+            <th>Name</th>
+            <th>Value</th>
+        </tr>
+%%  for $machine.get_attrs.kv() -> $attr {
+        <tr>
+            <td>[% $attr.key %]</td>
+            <td>[% $attr.value %]</td>
+        </tr>
+%%  }
+    </table>
+    
+    <h3>Add Attribute</h3>
+    <form method="post" action="/machine/[% $machine.id %]/update">
+        <input type="hidden" name="action" value="add_attr" />
+        <input type="text" name="name"  placeholder="Attribute Name" />
+        <input type="text" name="value" placeholder="Attribute Value" />
+        <input type="submit" value="Add">
+    </form>
+
+    <h2>Delete Machine</h2>
+    <form method="post" action="/machine/[% $machine.id %]/delete">
+        <input type="text" placeholder="Confirm Hostname" />
+        <input type="submit" value="Delete">
+    </form>
+%% }

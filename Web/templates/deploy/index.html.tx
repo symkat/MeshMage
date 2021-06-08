@@ -1,0 +1,31 @@
+%%  cascade _base { title => "Deploy Node",
+%%      sb_active => 'deploy_remote'
+%%  }
+
+%% override panel -> {
+
+%%  if ( $nodes.size() ) {
+    <h2 style="margin-top: 2em" class="h2">Machines</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Hostname</th>
+                <th>Network</th>
+                <th>Nebula IP</th>
+                <th>Public IP</th>
+            </tr>
+        </thead>
+        <tbody>
+%%          for $nodes -> $node {
+            <tr>
+                <td><a href="/deploy/[% $node.id %]">[% $node.hostname %]</a></td>
+                <td>[% $node.network.name %]</td>
+                <td>[% $node.nebula_ip %]</td>
+                <td>[% $node.public_ip %]</td>
+            </tr>
+%%          }
+        </tbody>
+    </table>
+%%  }
+
+%% }

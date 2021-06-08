@@ -1,0 +1,58 @@
+pki:
+  ca:   /etc/nebula/ca.crt
+  cert: /etc/nebula/{{ domain }}.crt
+  key:  /etc/nebula/{{ domain }}.key
+
+static_host_map:
+{% for lighthouse in lighthouses %}
+  "{{ lighthouse.nebula_ip }}": ["{{ lighthouse.public_ip }}:4242"]
+{% endfor %}
+
+lighthouse:
+  am_lighthouse: {{ 'true' if node.is_lighthouse else 'false' }}
+  serve_dns: {{ 'true' if node.is_lighthouse else 'false' }} 
+  interval: 60
+  hosts:
+{% if not node.is_lighthouse %}
+{% for lighthouse in lighthouses %}
+    - "{{ lighthouse.nebula_ip }}"
+{% endfor %}
+{% endif %}
+
+listen:
+  host: 0.0.0.0
+  port: {{ '4242' if node.is_lighthouse else '0' }}
+
+punchy:
+  punch: true
+  respond: true
+
+tun:
+  dev: nebula1
+  drop_local_broadcast: false
+  drop_multicast: false
+  tx_queue: 500
+  mtu: 1300
+
+logging:
+  level: info
+  format: text
+
+firewall:
+  conntrack:
+    tcp_timeout: 12m
+    udp_timeout: 3m
+    default_timeout: 10m
+    max_connections: 100000
+
+  outbound:
+    # Allow all outbound traffic from this node
+    - port: any
+      proto: any
+      host: any
+
+  inbound:
+    # Allow icmp between any nebula hosts
+    - port: any
+      proto: any
+      host: any

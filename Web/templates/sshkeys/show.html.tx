@@ -1,0 +1,29 @@
+%%  cascade _base { title => "Create Node",
+%%      sb_active => 'sshkeys'
+%%  }
+
+%% override panel -> {
+
+    <h2 style="margin-top: 2em" class="h2">Existing Keys</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>[% $key.info.id %]</td>
+                <td>[% $key.info.name %]</td>
+            </tr>
+        </tbody>
+    </table>
+
+    
+    <div class="mb-3">
+        <label for="private_key">SSH Public Key</label>
+        <textarea disabled class="form-control" id="private_key" name="private_key" rows="12">[% $key.content %]</textarea>
+    </div>
+
+%% }

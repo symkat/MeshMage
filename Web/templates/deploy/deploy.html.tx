@@ -1,0 +1,49 @@
+%%  cascade _base { title => "Deploy Node",
+%%      sb_active => 'deploy_remote'
+%%  }
+
+%% override panel -> {
+
+    <table style="margin-top: 2em" class="table">
+        <thead>
+            <tr>
+                <th>Hostname</th>
+                <th>Network</th>
+                <th>Nebula IP</th>
+                <th>Public IP</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>[% $node.hostname %]</td>
+                <td>[% $node.network.name %]</td>
+                <td>[% $node.nebula_ip %]</td>
+                <td>[% $node.public_ip %]</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 style="margin-top: 1.5em" class="h2">Deploy Node</h2>
+
+    <form style="margin-top: 1.5em" method="POST" action="/deploy">
+        <input type="hidden" name="node_id" value="[% $node.id %]" />
+
+        <div class="mb-3">
+            <label for="sshkey_id">SSH Key</label>
+            <select class="form-control" name="sshkey_id" id="sshkey_id">
+%%          for $sshkeys -> $sshkey {
+                <option value="[% $sshkey.id %]">[% $sshkey.name %]</option>
+%%          }
+            </select>
+        </div>
+
+        %% include '_form/input.tx' { type => 'text', name => 'deploy_ip',
+        %%   title => 'SSH IP',
+        %%   help  => 'This is the IP that MeshMage will connect to to install Nebula',
+        %%   value => $node.public_ip
+        %% };
+
+        <button type="submit" class="btn btn-primary float-end">Install Nebula</button>
+    </form>
+
+%% }

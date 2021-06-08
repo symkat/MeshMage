@@ -1,0 +1,75 @@
+%%  cascade _base { title => "Dashboard",
+%%      sb_active => 'dashboard'
+%%  }
+
+%% override panel -> {
+
+%%  if ( $networks.size() ) {
+    <h2 style="margin-top: 2em" class="h2">Networks</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Network</th>
+                <th>Network TLD</th>
+                <th>Address Space</th>
+            </tr>
+        </thead>
+        <tbody>
+%%          for $networks -> $network {
+            <tr>
+                <td>[% $network.name %]</td>
+                <td>[% $network.tld %]</td>
+                <td>[% $network.address %]</td>
+            </tr>
+%%          }
+        </tbody>
+    </table>
+%%  }
+
+%%  if ( $sshkeys.size() ) {
+    <h2 style="margin-top: 2em" class="h2">Existing Keys</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Description</th>
+                <th>View Key</th>
+            </tr>
+        </thead>
+        <tbody>
+%%          for $sshkeys -> $sshkey {
+            <tr>
+                <td>[% $sshkey.id %]</td>
+                <td>[% $sshkey.name %]</td>
+                <td><a href="/sshkeys/[% $sshkey.id %]"><span data-feather="key"></span></a></td>
+            </tr>
+%%          }
+        </tbody>
+    </table>
+%%  }
+
+%%  if ( $nodes.size() ) {
+    <h2 style="margin-top: 2em" class="h2">Machines</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Hostname</th>
+                <th>Network</th>
+                <th>Nebula IP</th>
+                <th>Public IP</th>
+            </tr>
+        </thead>
+        <tbody>
+%%          for $nodes -> $node {
+            <tr>
+                <td>[% $node.hostname %]</td>
+                <td>[% $node.network.name %]</td>
+                <td>[% $node.nebula_ip %]</td>
+                <td>[% $node.public_ip %]</td>
+            </tr>
+%%          }
+        </tbody>
+    </table>
+%%  }
+
+%% }

@@ -1,0 +1,4 @@
+requires 'Minion';
+requires 'Mojolicious::Plugin::XslateRenderer';
+requires 'Mojo::Pg';
+requires 'MeshMage::DB';

@@ -1,0 +1,28 @@
+%%  cascade _base { title => "Create Network",
+%%      sb_active => 'network'
+%%  }
+
+%% override panel -> {
+    <h2 style="margin-top: 1.5em" class="h2">New Network</h2>
+    <form method="POST" action="/network">
+       %% include '_form/input.tx' { type => 'text', name => 'network_name',
+       %%   title => 'Network Name',
+       %%   help  => 'This will be the name of the network (e.g. "Mesh Network")',
+       %%   value => $form_network_name
+       %% };
+
+       %% include '_form/input.tx' { type => 'text', name => 'network_tld',
+       %%   title => 'Network TLD',
+       %%   help  => 'The toplevel domain for the meshnet, like mn.example.com (nodes would be name.mn.example.com)',
+       %%   value => $form_network_tld
+       %% };
+
+       %% include '_form/input.tx' { type => 'text', name => 'network_cidr',
+       %%   title => 'Network CIDR',
+       %%   help  => 'The address for the network, (e.g. 192.168.50.1/24)',
+       %%   value => $form_network_cidr
+       %% };
+        <button type="submit" class="btn btn-primary float-end">Create Network</button>
+    </form>
+
+%% }

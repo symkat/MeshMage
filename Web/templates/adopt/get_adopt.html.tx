@@ -1,0 +1,34 @@
+%%  cascade _base { title => "View Machine",
+%%      sb_active => 'adopt'
+%%  }
+
+%% override panel -> {
+
+    <form method="POST" action="/adopt">
+        %% include '_form/input.tx' { type => 'text', name => 'domain_name',
+        %%   title => 'Domain Name',
+        %%   help  => 'The domain to access this machine over the mesh network (e.g. foobar.mn.example.com)',
+        %%   value => $form_domain_name
+        %% };
+        
+        %% include '_form/input.tx' { type => 'text', name => 'address',
+        %%   title => 'IP Address',
+        %%   help  => 'The IP Addess on the mesh network (e.g. 172.16.32.100)',
+        %%   value => $form_address
+        %% };
+        
+        %% include '_form/input.tx' { type => 'text', name => 'cidr',
+        %%   title => 'Cidr Bits',
+        %%   help  => 'If your network is 192.168.0.1/24, enter 24.',
+        %%   value => $form_cidr
+        %% };
+
+        %% include '_form/input.tx' { type => 'text', name => 'deploy_address',
+        %%   title => 'Deploy Address',
+        %%   help  => 'SSH user@host to configure',
+        %%   value => $form_deploy_address
+        %% };
+        <button type="submit" class="btn btn-primary float-end">Next</button>
+    </form>
+
+%% }

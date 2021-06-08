@@ -1,0 +1,55 @@
+%%  cascade _base { title => "Create Node",
+%%      sb_active => 'node'
+%%  }
+
+%% override panel -> {
+
+%%  if ( $networks.size() == 0 ) {
+    <h2 style="margin-top: 1.5em" class="h2">Create Node</h2>
+
+    <p>Before you can create a node, you must <a href="/network">create a network</a>.</p>
+
+%% } else {
+    
+    <h2 style="margin-top: 1.5em" class="h2">Create Node</h2>
+
+    <form style="margin-top: 1.5em" method="POST" action="/node">
+
+        <div class="mb-3">
+            <label for="network_id">Network</label>
+            <select class="form-control" name="network_id" id="network_id">
+%%          for $networks -> $network {
+                <option value="[% $network.id %]">[% $network.name %] ([% $network.address %])</option>
+%%          }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <input type="checkbox" class="form-check-input" id="is_lighthouse" name="is_lighthouse">
+            <label class="form-check-label" for="is_lighthouse">This node is a lighthouse.</label>
+        </div>
+
+        %% include '_form/input.tx' { type => 'text', name => 'hostname',
+        %%   title => 'Hostname',
+        %%   help  => 'The hostname (will be under the network TLD)',
+        %%   value => $form_hostname
+        %% };
+        
+        %% include '_form/input.tx' { type => 'text', name => 'address',
+        %%   title => 'IP Address',
+        %%   help  => 'The IP Addess on the mesh network (e.g. 172.16.32.100)',
+        %%   value => $form_address
+        %% };
+        
+        %% include '_form/input.tx' { type => 'text', name => 'public_address',
+        %%   title => 'Public IP',
+        %%   help  => 'The publically routable IP address (required for Lighthouse nodes)',
+        %%   value => $form_public_address
+        %% };
+
+        <button type="submit" class="btn btn-primary float-end">Next</button>
+    </form>
+
+%% }
+
+%% }

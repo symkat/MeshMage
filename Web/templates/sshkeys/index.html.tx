@@ -1,0 +1,61 @@
+%%  cascade _base { title => "Create Node",
+%%      sb_active => 'sshkeys'
+%%  }
+
+%% override panel -> {
+
+%%  if ( $sshkeys.size() ) {
+    <h2 style="margin-top: 2em" class="h2">Existing Keys</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+%%          for $sshkeys -> $sshkey {
+            <tr>
+                <td>[% $sshkey.id %]</td>
+                <td>[% $sshkey.name %]</td>
+            </tr>
+%%          }
+        </tbody>
+    </table>
+%%  }
+    <h2 style="margin-top: 1.5em" class="h2">Add SSH Key</h2>
+
+    <p>To use automatic deployment, you'll need to add an SSH key.  This key will be expected to work for root@ on the machine being deployed to.  You can import an SSH key or generate one</p>
+
+    <form style="margin-top: 1.5em" method="POST" action="/sshkeys">
+        %% include '_form/input.tx' { type => 'text', name => 'key_desc',
+        %%   title => 'Key Description',
+        %%   help  => 'A name / description for the SSH key to select later.',
+        %%   value => $form_key_desc
+        %% };
+
+        <div class="form-check">
+            <input data-bs-toggle="collapse" data-bs-target=".key_import" class="form-check-input" 
+                type="radio" name="key_method" id="key_method1" value="generate" checked>
+            <label class="form-check-label" for="key_method1">Generate SSH Keypair</label>
+        </div>
+        <div class="form-check">
+            <input data-bs-toggle="collapse" data-bs-target=".key_import" class="form-check-input"
+                type="radio" name="key_method" id="key_method2" value="import">
+            <label class="form-check-label" for="key_method2">Import SSH Private Key</label>
+        </div>
+
+        <div class="collapse key_import" class="mb-3">
+            <label for="private_key">SSH Private Key</label>
+            <textarea class="form-control" id="private_key" name="private_key" rows="10"></textarea>
+        </div>
+        
+        <div class="collapse key_import" class="mb-3">
+            <label for="public_key">SSH Public Key</label>
+            <textarea class="form-control" id="public_key" name="public_key" rows="10"></textarea>
+        </div>
+
+        <button style="margin-top: 0.75em" type="submit" class="btn btn-primary float-end">Create SSH Key</button>
+    </form>
+
+%% }

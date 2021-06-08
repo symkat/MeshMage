@@ -1,0 +1,12 @@
+---
+secrets:
+  - Random String To Use For Mojolicious Secrets
+nebula:
+  nebula_cert: Full path to nebula-cert binary
+  nebula: Full path to nebula binary
+  store: Full path for directory to put Nebula network/certs into
+sshkey:
+  store: Full path for directory to put ssh keys into
+ansible:
+  rundir: Full path to Ansible directory
+

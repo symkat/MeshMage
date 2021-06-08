@@ -1,0 +1,57 @@
+---
+- name: Install nebula binary
+  copy:
+    dest: /usr/local/sbin/nebula
+    src: "{{ role_path }}/files/nebula"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create Nebula Configuration Directory
+  file:
+    state: directory
+    path: /etc/nebula
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Install Nebula CA
+  copy:
+    dest: /etc/nebula/ca.crt
+    src:  "{{ meshnet_store }}/{{ network_id }}/ca.crt"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Install Nebula Domain Cert
+  copy:
+    dest: "/etc/nebula/{{ domain }}.crt"
+    src:  "{{ meshnet_store }}/{{ network_id }}/{{ domain }}.crt"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Install Nebula Domain Key
+  copy:
+    dest: "/etc/nebula/{{ domain }}.key"
+    src:  "{{ meshnet_store }}/{{ network_id }}/{{ domain }}.key"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Install Nebula Configuration File
+  template:
+    src: "{{ role_path }}/templates/config.yml.j2"
+    dest: /etc/nebula/config.yml
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Install Nebula Service File
+  copy:
+    dest: /etc/systemd/system/nebula.service
+    src: "{{ role_path }}/files/nebula.service"
+    owner: root
+    group: root
+    mode: 0644
+
