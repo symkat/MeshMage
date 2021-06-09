@@ -1,0 +1,23 @@
+- name: db
+  desc: "Control Devel DB Only"
+  children:
+    - name: start
+      desc: "Start devel db on localhost via docker."
+      shell:
+        - docker-compose --project-directory ./DB -f ./.docker/database.yml up
+    - name: stop
+      desc: "Stop devel db on localhost via docker."
+      shell:
+        - docker-compose --project-directory ./DB -f ./.docker/database.yml down
+    - name: status
+      desc: "Show status of devel db."
+      shell:
+        - docker-compose --project-directory ./DB -f ./.docker/database.yml ps
+    - name: reset
+      desc: "Wipe devel db data."
+      shell: 
+        - docker-compose --project-directory ./DB -f ./.docker/database.yml down -v
+    - name: shell
+      desc: "Grab a shell to psql"
+      shell:
+        - docker exec -ti meshmage-db psql -U meshmage meshmage

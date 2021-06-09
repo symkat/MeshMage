@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  database:
+    image: postgres:11
+    container_name: meshmage-db
+    ports:
+        - 127.0.0.1:5432:5432
+    environment:
+      - POSTGRES_PASSWORD=meshmage
+      - POSTGRES_USER=meshmage
+      - POSTGRES_DB=meshmage
+    volumes:
+      - ./etc/schema.sql:/docker-entrypoint-initdb.d/000_schema.sql:ro
+      - mesh_database:/var/lib/postgresql/data
+  minion-database:
+    image: postgres:11
+    container_name: meshmage-minion-db
+    ports:
+        - 127.0.0.1:5433:5432
+    environment:
+      - POSTGRES_PASSWORD=minion
+      - POSTGRES_USER=minion
+      - POSTGRES_DB=minion
+    volumes:
+      - minion_database:/var/lib/postgresql/data
+
+
+volumes:
+  mesh_database:
+  minion_database:
