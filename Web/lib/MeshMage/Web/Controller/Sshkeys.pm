@@ -15,9 +15,7 @@ sub show ($c) {
 }
 
 sub create ($c) {
-    
-    use Data::Dumper;
-    $c->log->debug( Dumper($c->req->params) );
+
     if ( $c->param('key_method') eq 'generate' ) {
         $c->minion->enqueue( 'generate_sshkey' => [ $c->param('key_desc') ]);
     } else {
