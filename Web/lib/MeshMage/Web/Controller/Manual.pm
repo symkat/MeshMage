@@ -25,13 +25,6 @@ sub deploy ($c) {
      );
 }
 
-sub create ($c) {
-
-    $c->minion->enqueue( 'deploy_node' => [ $c->param('node_id') ] );
-
-    $c->redirect_to( '/node' );
-}
-
 sub make_config ( $node ) {
 
     my @lighthouses = $node->network->search_related( 'nodes', { is_lighthouse => 1 } )->all;
