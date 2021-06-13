@@ -66,25 +66,9 @@ sub startup ($self) {
     $r->post  ('/sshkeys')            ->to('Sshkeys#create');
 
 
-
-
-
-    # Network Configuration
-    $r->get   ('/nebula' )           ->to('Nebula#show_network');
-    $r->post  ('/nebula' )           ->to('Nebula#create_network');
-
-    # Machine List / Manage
-    $r->get   ('/machine')           ->to('Machine#list_machine');
-    $r->get   ('/machine/:id')       ->to('Machine#get_machine');
-
-    $r->post  ('/machine')           ->to('Machine#create_machine');
-    $r->post  ('/machine/:id/update')->to('Machine#update_machine');
-    $r->post  ('/machine/:id/delete')->to('Machine#delete_machine');
-
     # Normal route to controller
     $r->get('/')                     ->to('Dashboard#index');
     $r->get('/dashboard')            ->to('Dashboard#index');
-
 
     ## Long Running Jobs.
     $self->minion->add_task( create_network_cert => sub ( $job, $network_name, $network_tld, $network_cidr ) {
