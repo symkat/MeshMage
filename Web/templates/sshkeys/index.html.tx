@@ -1,4 +1,4 @@
-%%  cascade _base { title => "Create Node",
+%%  cascade _base::layout { title => "Create Node",
 %%      sb_active => 'sshkeys'
 %%  }
 
@@ -28,7 +28,7 @@
     <p>To use automatic deployment, you'll need to add an SSH key.  This key will be expected to work for root@ on the machine being deployed to.  You can import an SSH key or generate one</p>
 
     <form style="margin-top: 1.5em" method="POST" action="/sshkeys">
-        %% include '_form/input.tx' { type => 'text', name => 'key_desc',
+        %% include '_base/form/input.tx' { type => 'text', name => 'key_desc',
         %%   title => 'Key Description',
         %%   help  => 'A name / description for the SSH key to select later.',
         %%   value => $form_key_desc

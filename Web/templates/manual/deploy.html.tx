@@ -1,4 +1,4 @@
-%%  cascade _base { title => "Configure Node",
+%%  cascade _base::layout { title => "Configure Node",
 %%      sb_active => 'deploy_manual'
 %%  }
 

@@ -1,4 +1,4 @@
-%%  cascade _base { title => "Dashboard",
+%%  cascade _base::layout { title => "Dashboard",
 %%      sb_active => 'dashboard'
 %%  }
 

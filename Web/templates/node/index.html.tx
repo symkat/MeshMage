@@ -1,4 +1,4 @@
-%%  cascade _base { title => "Create Node",
+%%  cascade _base::layout { title => "Create Node",
 %%      sb_active => 'node'
 %%  }
 
@@ -29,19 +29,19 @@
             <label class="form-check-label" for="is_lighthouse">This node is a lighthouse.</label>
         </div>
 
-        %% include '_form/input.tx' { type => 'text', name => 'hostname',
+        %% include '_base/form/input.tx' { type => 'text', name => 'hostname',
         %%   title => 'Hostname',
         %%   help  => 'The hostname (will be under the network TLD)',
         %%   value => $form_hostname
         %% };
         
-        %% include '_form/input.tx' { type => 'text', name => 'address',
+        %% include '_base/form/input.tx' { type => 'text', name => 'address',
         %%   title => 'IP Address',
         %%   help  => 'The IP Addess on the mesh network (e.g. 172.16.32.100)',
         %%   value => $form_address
         %% };
         
-        %% include '_form/input.tx' { type => 'text', name => 'public_address',
+        %% include '_base/form/input.tx' { type => 'text', name => 'public_address',
         %%   title => 'Public IP',
         %%   help  => 'The publically routable IP address (required for Lighthouse nodes)',
         %%   value => $form_public_address

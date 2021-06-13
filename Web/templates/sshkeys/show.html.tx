@@ -1,4 +1,4 @@
-%%  cascade _base { title => "Create Node",
+%%  cascade _base::layout { title => "Create Node",
 %%      sb_active => 'sshkeys'
 %%  }
 

@@ -1,4 +1,4 @@
-%%  cascade _base { title => "Deploy Node",
+%%  cascade _base::layout { title => "Deploy Node",
 %%      sb_active => 'deploy_remote'
 %%  }
 
@@ -37,7 +37,7 @@
             </select>
         </div>
 
-        %% include '_form/input.tx' { type => 'text', name => 'deploy_ip',
+        %% include '_base/form/input.tx' { type => 'text', name => 'deploy_ip',
         %%   title => 'SSH IP',
         %%   help  => 'This is the IP that MeshMage will connect to to install Nebula',
         %%   value => $node.public_ip
