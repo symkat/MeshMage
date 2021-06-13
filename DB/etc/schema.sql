@@ -63,6 +63,7 @@ create TABLE node_attribute (
 CREATE TABLE sshkeys (
     id                          serial          PRIMARY KEY,
     name                        text            not null,
+    public_key                  text            not null,
     created_at                  timestamptz     not null default current_timestamp
 );
 

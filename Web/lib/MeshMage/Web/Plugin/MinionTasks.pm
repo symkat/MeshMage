@@ -1,5 +1,8 @@
 package MeshMage::Web::Plugin::MinionTasks; 
 use Mojo::Base 'Mojolicious::Plugin', -signatures;
+use IPC::Run3;
+use File::Path qw( make_path );
+use File::Temp;
 
 sub register ( $self, $app, $config ) {
 
@@ -24,16 +27,25 @@ sub register ( $self, $app, $config ) {
     });
 
     $app->minion->add_task( generate_sshkey => sub ( $job, $comment ) {
-        my $key = $job->app->db->resultset('Sshkey')->create({
-            name => $comment,
-        });
+        run3( [ qw( ssh-keygen -t rsa -b 4096 -q -C ), $comment, '-N', '', '-f', $job->app->config->{sshkey}{store} . "/new_key"  ] );
+        my $private_key = Mojo::File->new( $job->app->config->{sshkey}{store} . "/new_key"     )->slurp;
+        my $public_key  = Mojo::File->new( $job->app->config->{sshkey}{store} . "/new_key.pub" )->slurp;
+        unlink $job->app->config->{sshkey}{store} . "/new_key";
+        unlink $job->app->config->{sshkey}{store} . "/new_key.pub";
 
-        run3( [ qw( ssh-keygen -t rsa -b 4096 -q -C ), $comment, '-N', '', '-f', $job->app->config->{sshkey}{store} . "/" . $key->id  ] );
+        my $key = $job->app->db->resultset('Sshkey')->create({
+            name       => $comment,
+            public_key => $public_key
+        });
+        
+        Mojo::File->new( $job->app->config->{sshkey}{store} . "/" . $key->id          )->spurt( $private_key );
+        Mojo::File->new( $job->app->config->{sshkey}{store} . "/" . $key->id . ".pub" )->spurt( $public_key );
     });
     
     $app->minion->add_task( import_sshkey => sub ( $job, $comment, $private_key, $public_key ) {
         my $key = $job->app->db->resultset('Sshkey')->create({
-            name => $comment,
+            name       => $comment,
+            public_key => $public_key,
         });
 
         Mojo::File->new( $job->app->config->{sshkey}{store} . "/" . $key->id          )->spurt( $private_key );

@@ -115,21 +115,6 @@ __PACKAGE__->set_primary_key("id");
 
 =head1 RELATIONS
 
-=head2 machines
-
-Type: has_many
-
-Related object: L<MeshMage::DB::Result::Machine>
-
-=cut
-
-__PACKAGE__->has_many(
-  "machines",
-  "MeshMage::DB::Result::Machine",
-  { "foreign.network_id" => "self.id" },
-  { cascade_copy => 0, cascade_delete => 0 },
-);
-
 =head2 nodes
 
 Type: has_many
@@ -146,8 +131,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-06-05 18:43:45
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:6IIpmu6yIntxXoIKJPNDQg
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-06-13 22:16:41
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:3lj5OoiCwYG+OUBZkansAg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

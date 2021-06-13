@@ -49,6 +49,11 @@ __PACKAGE__->table("sshkeys");
   data_type: 'text'
   is_nullable: 0
 
+=head2 public_key
+
+  data_type: 'text'
+  is_nullable: 0
+
 =head2 created_at
 
   data_type: 'timestamp with time zone'
@@ -66,6 +71,8 @@ __PACKAGE__->add_columns(
     sequence          => "sshkeys_id_seq",
   },
   "name",
+  { data_type => "text", is_nullable => 0 },
+  "public_key",
   { data_type => "text", is_nullable => 0 },
   "created_at",
   {
@@ -88,8 +95,8 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("id");
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-06-07 07:29:27
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ZkAMiHjAwbPP1Z/h+5zAZQ
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-06-13 22:16:41
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:X6jROLdtteQy6qomHHipIQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
