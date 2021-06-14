@@ -40,9 +40,9 @@
     mode: 0644
 
 - name: Install Nebula Configuration File
-  template:
-    src: "{{ role_path }}/templates/config.yml.j2"
+  copy:
     dest: /etc/nebula/config.yml
+    src:  "{{ role_path }}/files/{{ domain }}.yml"
     owner: root
     group: root
     mode: 0644

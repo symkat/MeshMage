@@ -30,6 +30,7 @@ sub startup ($self) {
     $self->plugin( Minion => { Pg => 'postgresql://minion:minion@localhost:5433/minion' } );
     $self->plugin( 'Minion::Admin' );
     $self->plugin( 'MeshMage::Web::Plugin::MinionTasks' );
+    $self->plugin( 'MeshMage::Web::Plugin::NebulaConfig' );
 
     # Router
     my $r = $self->routes;

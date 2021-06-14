@@ -19,7 +19,7 @@ sub register ( $self, $app, $config ) {
         make_path( $job->app->config->{nebula}->{store} . "/" . $network->id );
         
         # Create the network cert and signing key.
-        run3( [ $self->config->{nebula}->{nebula_cert}, 'ca',
+        run3( [ $job->app->config->{nebula}->{nebula_cert}, 'ca',
             '-out-crt', sprintf( "%s/%d/ca.crt", $job->app->config->{nebula}->{store}, $network->id ),
             '-out-key', sprintf( "%s/%d/ca.key", $job->app->config->{nebula}->{store}, $network->id ), 
             '-name'   , $network_name,
@@ -63,6 +63,15 @@ sub register ( $self, $app, $config ) {
             UNLINK   => 0,
             DIR      => $job->app->config->{ansible}{rundir},
         );
+
+        # Create a nebula confif file for this domain so that Ansible may use
+        # the file.
+        my $nebula_config = $job->app->make_nebula_config( $node );
+        my $nebula_config_path = sprintf( "%s/roles/meshmage-node/files/%s.yml",
+            $job->app->config->{ansible}{rundir}, $node->hostname
+        );
+        Mojo::File->new( $nebula_config_path )->spurt( $nebula_config );
+
         
         print $playbook "- name: Configure Nebula Node\n";
         print $playbook "  remote_user: root\n"; 
@@ -114,7 +123,7 @@ sub register ( $self, $app, $config ) {
             ( $public ? ( public_ip => $public ) : () ),
         });
 
-        my $command = [ $self->config->{nebula}->{nebula_cert}, 'sign',
+        my $command = [ $job->app->config->{nebula}->{nebula_cert}, 'sign',
             '-ca-crt',  $store_path . "ca.crt",
             '-ca-key',  $store_path . "ca.key",
             '-name',    $domain,
