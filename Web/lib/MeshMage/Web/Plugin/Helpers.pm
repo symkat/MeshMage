@@ -5,12 +5,11 @@ sub register ( $self, $app, $config ) {
 
     $app->helper( filepath_for => sub ( $c, $type, @file_segments ) {
 
-        my $file = join( "/", @file_segments );
         return sprintf( "%s/%s/%s",
             $c->config->{filestore}{prefix},
             $c->config->{filestore}{$type},
-            $file,
-        ) if $file;
+            join( "/", @file_segments ),
+        ) if @file_segments;
 
         return sprintf( "%s/%s",
             $c->config->{filestore}{prefix},
