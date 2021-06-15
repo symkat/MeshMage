@@ -9,12 +9,12 @@ sub index ($c) {
 
 sub deploy ($c) {
     my $node = $c->db->resultset('Node')->find( $c->param('node_id') );
-    
-    my $path = sprintf( "%s/%s", $c->config->{nebula}{store}, $node->network->id );
+    my $n_id = $node->network->id;
+    my $host = $node->hostname;
 
-    my $ca   = Mojo::File->new( "$path/ca.crt" )->slurp;
-    my $cert = Mojo::File->new( sprintf( "%s/%s.crt", $path, $node->hostname ) )->slurp;
-    my $key  = Mojo::File->new( sprintf( "%s/%s.key", $path, $node->hostname ) )->slurp;
+    my $ca   = Mojo::File->new( $c->filepath_for( nebula => $n_id, 'ca.crt' ) )->slurp;
+    my $cert = Mojo::File->new( $c->filepath_for( nebula => $n_id, $host . '.crt') )->slurp;
+    my $key  = Mojo::File->new( $c->filepath_for( nebula => $n_id, $host . '.key') )->slurp;
 
     $c->stash( 
         node => $node,

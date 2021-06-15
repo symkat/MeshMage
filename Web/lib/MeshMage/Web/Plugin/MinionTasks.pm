@@ -16,30 +16,30 @@ sub register ( $self, $app, $config ) {
         });
 
         # Create the storage location for this network.
-        make_path( $job->app->config->{nebula}->{store} . "/" . $network->id );
+        make_path($job->app->filepath_for(nebula => $network->id));
         
         # Create the network cert and signing key.
         run3( [ $job->app->config->{nebula}->{nebula_cert}, 'ca',
-            '-out-crt', sprintf( "%s/%d/ca.crt", $job->app->config->{nebula}->{store}, $network->id ),
-            '-out-key', sprintf( "%s/%d/ca.key", $job->app->config->{nebula}->{store}, $network->id ), 
+            '-out-crt', $job->app->filepath_for(nebula => $network->id, 'ca.crt'),
+            '-out-key', $job->app->filepath_for(nebula => $network->id, 'ca.key'),
             '-name'   , $network_name,
         ]);
     });
 
     $app->minion->add_task( generate_sshkey => sub ( $job, $comment ) {
-        run3( [ qw( ssh-keygen -t rsa -b 4096 -q -C ), $comment, '-N', '', '-f', $job->app->config->{sshkey}{store} . "/new_key"  ] );
-        my $private_key = Mojo::File->new( $job->app->config->{sshkey}{store} . "/new_key"     )->slurp;
-        my $public_key  = Mojo::File->new( $job->app->config->{sshkey}{store} . "/new_key.pub" )->slurp;
-        unlink $job->app->config->{sshkey}{store} . "/new_key";
-        unlink $job->app->config->{sshkey}{store} . "/new_key.pub";
+        run3( [ qw( ssh-keygen -t rsa -b 4096 -q -C ), $comment, '-N', '', '-f', $job->app->filepath_for( sshkey => 'new_key' )]);
+        my $private_key = Mojo::File->new( $job->app->filepath_for(sshkey => "/new_key"    ))->slurp;
+        my $public_key  = Mojo::File->new( $job->app->filepath_for(sshkey => "/new_key.pub"))->slurp;
+        unlink $job->app->filepath_for( sshkey => "/new_key" );
+        unlink $job->app->filepath_for( sshkey => "/new_key.pub");
 
         my $key = $job->app->db->resultset('Sshkey')->create({
             name       => $comment,
             public_key => $public_key
         });
         
-        Mojo::File->new( $job->app->config->{sshkey}{store} . "/" . $key->id          )->spurt( $private_key );
-        Mojo::File->new( $job->app->config->{sshkey}{store} . "/" . $key->id . ".pub" )->spurt( $public_key );
+        Mojo::File->new( $job->app->filepath_for(sshkey => $key->id         ))->spurt($private_key);
+        Mojo::File->new( $job->app->filepath_for(sshkey => $key->id . '.pub'))->spurt($public_key );
     });
     
     $app->minion->add_task( import_sshkey => sub ( $job, $comment, $private_key, $public_key ) {
@@ -48,8 +48,8 @@ sub register ( $self, $app, $config ) {
             public_key => $public_key,
         });
 
-        Mojo::File->new( $job->app->config->{sshkey}{store} . "/" . $key->id          )->spurt( $private_key );
-        Mojo::File->new( $job->app->config->{sshkey}{store} . "/" . $key->id . ".pub" )->spurt( $public_key );
+        Mojo::File->new($job->app->filepath_for(sshkey => $key->id         ))->spurt($private_key);
+        Mojo::File->new($job->app->filepath_for(sshkey => $key->id . '.pub'))->spurt($public_key );
 
     });
 
@@ -64,13 +64,10 @@ sub register ( $self, $app, $config ) {
             DIR      => $job->app->config->{ansible}{rundir},
         );
 
-        # Create a nebula confif file for this domain so that Ansible may use
+        # Create a nebula config file for this domain so that Ansible may use
         # the file.
-        my $nebula_config = $job->app->make_nebula_config( $node );
-        my $nebula_config_path = sprintf( "%s/roles/meshmage-node/files/%s.yml",
-            $job->app->config->{ansible}{rundir}, $node->hostname
-        );
-        Mojo::File->new( $nebula_config_path )->spurt( $nebula_config );
+        Mojo::File->new( $job->app->filepath_for( nebula => $node->network->id, $node->hostname . '.yml' ))
+            ->spurt( $job->app->make_nebula_config( $node ));
 
         
         print $playbook "- name: Configure Nebula Node\n";
@@ -78,7 +75,7 @@ sub register ( $self, $app, $config ) {
         print $playbook "  vars:\n";
         print $playbook "    ansible_ssh_common_args: -oControlMaster=auto -oControlPersist=60s -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no\n";
         print $playbook "    domain: " . $node->hostname . "\n";
-        print $playbook "    meshnet_store: " . $job->app->config->{nebula}{store} . "\n";
+        print $playbook "    meshnet_store: " . $job->app->filepath_for( 'nebula' ) . "\n";
         print $playbook "    network_id: " . $node->network->id . "\n";
         print $playbook "    node:\n";
         print $playbook "      is_lighthouse: " . $node->is_lighthouse . "\n"; 
@@ -96,7 +93,7 @@ sub register ( $self, $app, $config ) {
         close $playbook;
 
         run3([ 'ansible-playbook', '-i', "$deploy_ip,", 
-            '--key-file', $job->app->config->{sshkey}{store} . "/$key_id", 
+            '--key-file', $job->app->filepath_for( sshkey => $key_id ),
              $playbook->filename  
         ]);
     });
@@ -110,8 +107,6 @@ sub register ( $self, $app, $config ) {
         
         # If is_lighthouse, ensure public IP exists.
         
-        my $store_path = $job->app->config->{nebula}->{store} . "/" . $network->id . "/";
-
         my $domain = sprintf( "%s.%s", $hostname, $network->tld );
 
         my $cidr = (split( /\//, $network->address))[1];
@@ -124,12 +119,12 @@ sub register ( $self, $app, $config ) {
         });
 
         my $command = [ $job->app->config->{nebula}->{nebula_cert}, 'sign',
-            '-ca-crt',  $store_path . "ca.crt",
-            '-ca-key',  $store_path . "ca.key",
+            '-ca-crt',  $job->app->filepath_for( nebula => $network->id, "ca.crt" ),
+            '-ca-key',  $job->app->filepath_for( nebula => $network->id, "ca.key" ),
             '-name',    $domain,
             '-ip',      "$address/$cidr",
-            '-out-crt', $store_path . "$domain.crt",
-            '-out-key', $store_path . "$domain.key",
+            '-out-crt', $job->app->filepath_for( nebula => $network->id, "$domain.crt" ),
+            '-out-key', $job->app->filepath_for( nebula => $network->id, "$domain.key" ),
         ];
         run3( $command );
     });

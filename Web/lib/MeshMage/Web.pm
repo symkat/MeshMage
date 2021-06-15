@@ -31,6 +31,7 @@ sub startup ($self) {
     $self->plugin( 'Minion::Admin' );
     $self->plugin( 'MeshMage::Web::Plugin::MinionTasks' );
     $self->plugin( 'MeshMage::Web::Plugin::NebulaConfig' );
+    $self->plugin( 'MeshMage::Web::Plugin::Helpers' );
 
     # Router
     my $r = $self->routes;

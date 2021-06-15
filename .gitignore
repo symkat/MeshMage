@@ -1,5 +1,3 @@
-certs/
-keys/
 Web/meshmage.yml
 Web/.plx
 Web/local
@@ -7,3 +5,4 @@ Web/devel
 Web/tmp
 Web/pans
 Ansible/playbook*
+data/
