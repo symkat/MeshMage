@@ -51,6 +51,7 @@ sub startup ($self) {
     # Connect Nodes
     $r->get   ('/node')              ->to('Node#index');
     $r->post  ('/node')              ->to('Node#create');
+    $r->get   ('/node/:node_id')     ->to('Node#show')->name('show_node');
 
     $r->get   ('/deploy')            ->to('Deploy#index');
     $r->get   ('/deploy/:node_id')   ->to('Deploy#deploy');

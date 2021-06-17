@@ -1,5 +1,6 @@
 package MeshMage::Web::Controller::Node;
 use Mojo::Base 'Mojolicious::Controller', -signatures;
+use Mojo::JSON qw( encode_json );
 
 sub index ($c) {
     my @nodes    = $c->db->resultset('Node')->all();
@@ -15,6 +16,16 @@ sub create ($c) {
     ]);
 
     $c->redirect_to( '/node' );
+}
+
+sub show ($c) {
+    my $node = $c->db->resultset('Node')->find( $c->param('node_id') );
+    my $jobs = $c->minion->jobs( { notes => [ $node->hostname ] } );
+
+    $c->stash(
+        node => $node,
+        jobs => $jobs,
+    );
 }
 
 1;

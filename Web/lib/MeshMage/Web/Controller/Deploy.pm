@@ -16,9 +16,14 @@ sub deploy ($c) {
 
 sub create ($c) {
 
-    $c->minion->enqueue( 'deploy_node' => [ $c->param('node_id'), $c->param('sshkey_id'), $c->param('deploy_ip') ] );
+    my $node = $c->db->resultset('Node')->find( $c->param('node_id') );
 
-    $c->redirect_to( '/node' );
+    my $job_id = $c->minion->enqueue(
+        deploy_node => [ $node->id, $c->param('sshkey_id'), $c->param('deploy_ip') ],
+        { notes => { $node->hostname => 1 } }
+    );
+
+    $c->redirect_to( $c->url_for( 'show_node', node_id => $node->id ) );
 }
 
 1;
