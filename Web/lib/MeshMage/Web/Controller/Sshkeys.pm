@@ -9,7 +9,7 @@ sub index ($c) {
 
 sub show ($c) {
     my $key = $c->db->resultset('Sshkey')->find( $c->param('id') );
-    my $pub = Mojo::File->new( $c->config->{sshkey}{store} . "/" . $key->id . ".pub" )->slurp;
+    my $pub = Mojo::File->new( $c->filepath_for(sshkey => $key->id . '.pub') )->slurp;
 
     $c->stash( key => { info => $key, content => $pub } );
 }
