@@ -1,6 +1,5 @@
 package MeshMage::Web::Controller::Node;
 use Mojo::Base 'Mojolicious::Controller', -signatures;
-use Mojo::JSON qw( encode_json );
 
 sub index ($c) {
     my @nodes    = $c->db->resultset('Node')->all();

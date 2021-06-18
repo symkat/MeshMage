@@ -3,7 +3,7 @@
 %%  }
 
 %% override panel -> {
-    <h2 style="margin-top: 2em" class="h2">Machines</h2>
+    <h2 style="margin-top: 2em" class="h2">Nodes</h2>
     <table class="table">
         <thead>
             <tr>
@@ -23,8 +23,24 @@
         </tbody>
     </table>
 
-%% while $jobs.next() -> $job {
-    Hello from [% $job.id %] in queue [% $job.queue %] for [% $job.task %] <br />
-%% }
+    <h2 style="margin-top: 2em" class="h2">Jobs</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody>
+%%          while $jobs.next() -> $job {
+            <tr>
+                <td><a href="/minion/jobs?id=[% $job.id %]">[% $job.id %]</a></td>
+                <td>[% $job.task %]</td>
+                <td>[% $job.state %]</td>
+            </tr>
+%%          }
+        </tbody>
+    </table>
 
 %% }
