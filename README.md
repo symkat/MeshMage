@@ -7,6 +7,7 @@
 As root on a fresh Debian 10 machine, docker can be installed as follows:
 
 ```bash
+apt-get update
 apt-get remove -y docker docker-engine docker.io containerd runc
 apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
 curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -19,14 +20,24 @@ apt-get update
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose
 ```
 
-2. Install system dependancies
+2. Install Ansible
+
+```bash
+echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" \
+    > /etc/apt/sources.list.d/ansible.list
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
+apt-get install -y ansible
+```
+
+
+3. Install system dependancies
 
 ```bash
 apt-get install -y build-essential libpq-dev libssl-dev libz-dev cpanminus liblocal-lib-perl
 ```
 
 
-3. Add a user account with docker permissions and install public key
+4. Add a user account with docker permissions and install public key
 
 ```bash
 useradd --shell /bin/bash -m -U -G docker meshmage
@@ -39,17 +50,19 @@ chown meshmage.meshmage /home/meshmage/.ssh/authorized_keys
 chmod 0600 /home/meshmage/.ssh/authorized_keys
 ```
 
-4. Install MeshMage
+5. Install MeshMage
 
 ```bash
 cpanm App::plx App::opan App::Dex Carton Dist::Zilla
-git clone git@github.com:symkat/MeshMage.git
+GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
+    git clone git@github.com:symkat/MeshMage.git
 cd MeshMage/DB
 dzil build
 cd ../Web
 plx --init
 plx --config libspec add 00tilde.ll $HOME/perl5
 plx --config libspec add 40dblib.dir ../DB/lib
+plx opan init
 plx opan add ../DB/MeshMage-DB-0.001.tar.gz
 plx opan merge
 plx opan carton install
@@ -57,7 +70,7 @@ plx opan carton install
 
 Now you will want to copy Web/meshmage.yml.sample to Web/meshmage.yml and fill out the config file.
 
-5. Run The App
+6. Run The App
 
 You'll want to grab a second shell to start the DB.  Make sure you're in the top level directory of MeshMage.
 
