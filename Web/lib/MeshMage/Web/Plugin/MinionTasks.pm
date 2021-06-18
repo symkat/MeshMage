@@ -3,6 +3,7 @@ use Mojo::Base 'Mojolicious::Plugin', -signatures;
 use IPC::Run3;
 use File::Path qw( make_path );
 use File::Temp;
+use Try::Tiny;
 
 sub register ( $self, $app, $config ) {
 
@@ -26,6 +27,11 @@ sub register ( $self, $app, $config ) {
         ]);
     });
 
+    # generate_sshkey
+    #
+    # This task will generate an ssh keypair and then schedule it to be
+    # imported with the task import_sshkey.
+    #
     $app->minion->add_task( generate_sshkey => sub ( $job, $comment ) {
 
         # Get the name of a temp file to use for the SSH keypair.
@@ -48,15 +54,38 @@ sub register ( $self, $app, $config ) {
         $job->app->minion->enqueue( import_sshkey => [ $comment, $private_key, $public_key ] );
     });
     
+    # import_sshkey
+    #
+    # Given a comment and keypair, store the keypair for use, and also stuff the public key
+    # into the DB so we can tell the user what it is later.
+    #
+    # If the public or private key file already exists, we will refuse to overwrite it and
+    # throw an error, this error state will require manual intervention to correct.
     $app->minion->add_task( import_sshkey => sub ( $job, $comment, $private_key, $public_key ) {
-        my $key = $job->app->db->resultset('Sshkey')->create({
-            name       => $comment,
-            public_key => $public_key,
-        });
 
-        Mojo::File->new($job->app->filepath_for(sshkey => $key->id         ))->spurt($private_key);
-        Mojo::File->new($job->app->filepath_for(sshkey => $key->id . '.pub'))->spurt($public_key );
+        try {
+            $job->app->db->txn_do(sub {
+                my $key = $job->app->db->resultset('Sshkey')->create({
+                    name       => $comment,
+                    public_key => $public_key,
+                });
 
+                die "Error: refusing to overwrite existing ssh private key with id " . $key->id
+                    if -e $job->app->filepath_for(sshkey => $key->id);
+
+                die "Error: refusing to overwrite existing ssh public key with id " . $key->id
+                    if -e $job->app->filepath_for(sshkey => $key->id);
+
+                Mojo::File->new($job->app->filepath_for(sshkey => $key->id         ))->spurt($private_key);
+                Mojo::File->new($job->app->filepath_for(sshkey => $key->id . '.pub'))->spurt($public_key );
+
+                return 1;
+            });
+        } catch {
+            $job->fail( $_ );
+        } finally {
+            $job->finish() unless shift;
+        };
     });
 
     $app->minion->add_task( deploy_node => sub ( $job, $node_id, $key_id, $deploy_ip ) {
