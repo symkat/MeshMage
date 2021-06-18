@@ -7,24 +7,39 @@ use Try::Tiny;
 
 sub register ( $self, $app, $config ) {
 
+    # create_network_cert
+    #
+    # This task will create the network directory and keys.  The directory is expected
+    # to be new, if it already exists we'll throw an error.
+    #
     $app->minion->add_task( create_network_cert => sub ( $job, $network_name, $network_tld, $network_cidr ) {
 
-        # Add this network to the DB.
-        my $network = $job->app->db->resultset('Network')->create({
-            name    => $network_name,
-            tld     => $network_tld,
-            address => $network_cidr,
-        });
+        try {
+            $job->app->db->txn_do(sub {
+                # Add this network to the DB.
+                my $network = $job->app->db->resultset('Network')->create({
+                    name    => $network_name,
+                    tld     => $network_tld,
+                    address => $network_cidr,
+                });
 
-        # Create the storage location for this network.
-        make_path($job->app->filepath_for(nebula => $network->id));
-        
-        # Create the network cert and signing key.
-        run3( [ $job->app->config->{nebula}->{nebula_cert}, 'ca',
-            '-out-crt', $job->app->filepath_for(nebula => $network->id, 'ca.crt'),
-            '-out-key', $job->app->filepath_for(nebula => $network->id, 'ca.key'),
-            '-name'   , $network_name,
-        ]);
+                # Create the storage location for this network.
+                my $count = make_path($job->app->filepath_for(nebula => $network->id));
+                die "Error: refusing to overwrite an existing network directory.\n"
+                    unless $count == 1;
+
+                # Create the network cert and signing key.
+                run3( [ $job->app->config->{nebula}->{nebula_cert}, 'ca',
+                    '-out-crt', $job->app->filepath_for(nebula => $network->id, 'ca.crt'),
+                    '-out-key', $job->app->filepath_for(nebula => $network->id, 'ca.key'),
+                    '-name'   , $network_name,
+                ]);
+            });
+        } catch {
+            $job->fail( $_ );
+        } finally {
+            $job->finish() unless shift;
+        };
     });
 
     # generate_sshkey
