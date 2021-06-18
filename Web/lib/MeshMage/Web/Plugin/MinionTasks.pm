@@ -4,6 +4,7 @@ use IPC::Run3;
 use File::Path qw( make_path );
 use File::Temp;
 use Try::Tiny;
+use Net::Subnet;
 
 sub register ( $self, $app, $config ) {
 
@@ -148,16 +149,41 @@ sub register ( $self, $app, $config ) {
         ]);
     });
     
+    # create_node
+    #
+    # Create the nebula certs for the node and sign them.
+    #
     $app->minion->add_task( create_node => sub ( $job, $network_id, $is_lighthouse, $hostname, $address, $public ) {
         my $network = $job->app->db->resultset('Network')->find( $network_id );
 
         # Make sure hostname is plain word, or matches the TLD for the network.
+        if ( index($hostname, '.') ) {
+            my $tld   = $network->tld;
 
-        # Make sure the IP address isn't used, and is within the network range.
+            $job->fail( "Error: $hostname must be plain word or FQDN ending with $tld" )
+                unless $hostname =~ /\.\Q$tld\E$/;
+            return;
+        }
         
-        # If is_lighthouse, ensure public IP exists.
-        
-        my $domain = sprintf( "%s.%s", $hostname, $network->tld );
+        # Set $domain to the FQDN for this node.
+        my $domain = index($hostname, '.')
+            ? $hostname
+            : sprintf( "%s.%s", $hostname, $network->tld );
+
+        # Make sure the IP address isn't used. -- Should overlapping networks be allowed?
+        my $ip_is_used = $job->app->db->resultset('Node')->search( { nebula_ip => $address } )->count;
+        if ( $ip_is_used ) {
+            $job->fail( "IP address for Nebula, $address, is already used." );
+            return;
+        }
+
+        # Make sure the address we're using is within the defined cidr for the network we're adding
+        # the node to.
+        my $is_in_network = subnet_matcher $network->address;
+        if ( ! $is_in_network->($address) ) {
+            $job->fail( "IP address for Nebula, $address, is not in range " . $network->address );
+            return;
+        }
 
         my $cidr = (split( /\//, $network->address))[1];
 
@@ -176,6 +202,7 @@ sub register ( $self, $app, $config ) {
             '-out-crt', $job->app->filepath_for( nebula => $network->id, "$domain.crt" ),
             '-out-key', $job->app->filepath_for( nebula => $network->id, "$domain.key" ),
         ];
+
         run3( $command );
     });
 }
