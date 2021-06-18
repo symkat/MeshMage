@@ -27,19 +27,25 @@ sub register ( $self, $app, $config ) {
     });
 
     $app->minion->add_task( generate_sshkey => sub ( $job, $comment ) {
-        run3( [ qw( ssh-keygen -t rsa -b 4096 -q -C ), $comment, '-N', '', '-f', $job->app->filepath_for( sshkey => 'new_key' )]);
-        my $private_key = Mojo::File->new( $job->app->filepath_for(sshkey => "/new_key"    ))->slurp;
-        my $public_key  = Mojo::File->new( $job->app->filepath_for(sshkey => "/new_key.pub"))->slurp;
-        unlink $job->app->filepath_for( sshkey => "/new_key" );
-        unlink $job->app->filepath_for( sshkey => "/new_key.pub");
 
-        my $key = $job->app->db->resultset('Sshkey')->create({
-            name       => $comment,
-            public_key => $public_key
-        });
-        
-        Mojo::File->new( $job->app->filepath_for(sshkey => $key->id         ))->spurt($private_key);
-        Mojo::File->new( $job->app->filepath_for(sshkey => $key->id . '.pub'))->spurt($public_key );
+        # Get the name of a temp file to use for the SSH keypair.
+        my $keyfile = File::Temp->new(TEMPLATE => 'XXXXXXXX', SUFFIX => '' );
+        $keyfile->close;
+        unlink $keyfile->filename;
+
+        # Create SSH Key
+        run3([qw( ssh-keygen -t rsa -b 4096 -q), '-C' => $comment, '-N' => '', '-f' => $keyfile->filename]);
+
+        # Get the contents of the newly created keyfile pair.
+        my $private_key = Mojo::File->new( $keyfile->filename          )->slurp;
+        my $public_key  = Mojo::File->new( $keyfile->filename . '.pub' )->slurp;
+
+        # Delete the files.
+        unlink $keyfile->filename;
+        unlink $keyfile->filename . '.pub';
+
+        # Schedule an import of these keys.
+        $job->app->minion->enqueue( import_sshkey => [ $comment, $private_key, $public_key ] );
     });
     
     $app->minion->add_task( import_sshkey => sub ( $job, $comment, $private_key, $public_key ) {
