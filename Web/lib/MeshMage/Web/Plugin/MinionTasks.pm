@@ -157,7 +157,7 @@ sub register ( $self, $app, $config ) {
         my $network = $job->app->db->resultset('Network')->find( $network_id );
 
         # Make sure hostname is plain word, or matches the TLD for the network.
-        if ( index($hostname, '.') ) {
+        if ( index($hostname, '.') != -1 ) {
             my $tld   = $network->tld;
 
             $job->fail( "Error: $hostname must be plain word or FQDN ending with $tld" )
@@ -166,7 +166,7 @@ sub register ( $self, $app, $config ) {
         }
         
         # Set $domain to the FQDN for this node.
-        my $domain = index($hostname, '.')
+        my $domain = index($hostname, '.') >= 0
             ? $hostname
             : sprintf( "%s.%s", $hostname, $network->tld );
 
