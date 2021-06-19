@@ -53,19 +53,19 @@ sub startup ($self) {
     $r->post  ('/node')              ->to('Node#create');
     $r->get   ('/node/:node_id')     ->to('Node#show')->name('show_node');
 
-    $r->get   ('/deploy')            ->to('Deploy#index');
-    $r->get   ('/deploy/:node_id')   ->to('Deploy#deploy');
-    $r->post  ('/deploy')            ->to('Deploy#create');
-    
-    # Manual Deployment
-    $r->get   ('/manual')            ->to('Manual#index');
-    $r->get   ('/manual/:node_id')   ->to('Manual#deploy');
-    $r->post  ('/manual')            ->to('Manual#create');
+    # Deployment
+    $r->get   ('/deploy/automatic' )          ->to('Deploy::Automatic#index' );
+    $r->get   ('/deploy/automatic/:node_id' ) ->to('Deploy::Automatic#deploy');
+    $r->post  ('/deploy/automatic' )          ->to('Deploy::Automatic#create');
 
+    $r->get   ('/deploy/manual' )          ->to('Deploy::Manual#index' );
+    $r->get   ('/deploy/manual/:node_id' ) ->to('Deploy::Manual#deploy');
+    $r->post  ('/deploy/manual' )          ->to('Deploy::Manual#create');
+
+    # Manage SSH Keys
     $r->get   ('/sshkeys')            ->to('Sshkeys#index');
     $r->get   ('/sshkeys/:id')        ->to('Sshkeys#show');
     $r->post  ('/sshkeys')            ->to('Sshkeys#create');
-
 
     # Normal route to controller
     $r->get('/')                     ->to('Dashboard#index');

@@ -1,4 +1,4 @@
-package MeshMage::Web::Controller::Manual;
+package MeshMage::Web::Controller::Deploy::Manual;
 use Mojo::Base 'Mojolicious::Controller', -signatures;
 
 sub index ($c) {

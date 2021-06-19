@@ -56,14 +56,14 @@
         </h6>
         <ul class="nav flex-column mb-2">
           <li class="nav-item">
-            <a class="nav-link [% $sb_active == "deploy_remote" ? "active" : "" %]" href="/deploy">
+            <a class="nav-link [% $sb_active == "deploy_automatic" ? "active" : "" %]" href="/deploy/automatic">
               <span data-feather="hard-drive"></span>
               Remote Node
             </a>
           </li>
 
           <li class="nav-item">
-            <a class="nav-link [% $sb_active == "deploy_manual" ? "active" : "" %]" href="/manual">
+            <a class="nav-link [% $sb_active == "deploy_manual" ? "active" : "" %]" href="/deploy/manual">
               <span data-feather="user"></span>
               Manual Setup
             </a>

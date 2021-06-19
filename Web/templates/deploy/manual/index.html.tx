@@ -5,7 +5,7 @@
 %% override panel -> {
 
 %%  if ( $nodes.size() ) {
-    <h2 style="margin-top: 2em" class="h2">Machines</h2>
+    <h2 style="margin-top: 2em" class="h2">Nodes</h2>
     <table class="table">
         <thead>
             <tr>
@@ -18,7 +18,7 @@
         <tbody>
 %%          for $nodes -> $node {
             <tr>
-                <td><a href="/manual/[% $node.id %]">[% $node.hostname %]</a></td>
+                <td><a href="/deploy/manual/[% $node.id %]">[% $node.hostname %]</a></td>
                 <td>[% $node.network.name %]</td>
                 <td>[% $node.nebula_ip %]</td>
                 <td>[% $node.public_ip %]</td>

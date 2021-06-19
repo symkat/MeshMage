@@ -1,5 +1,5 @@
 %%  cascade _base::layout { title => "Deploy Node",
-%%      sb_active => 'deploy_remote'
+%%      sb_active => 'deploy_automatic'
 %%  }
 
 %% override panel -> {
@@ -25,7 +25,7 @@
 
     <h2 style="margin-top: 1.5em" class="h2">Deploy Node</h2>
 
-    <form style="margin-top: 1.5em" method="POST" action="/deploy">
+    <form style="margin-top: 1.5em" method="POST" action="/deploy/automatic">
         <input type="hidden" name="node_id" value="[% $node.id %]" />
 
         <div class="mb-3">

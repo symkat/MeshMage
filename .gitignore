@@ -4,5 +4,6 @@ Web/local
 Web/devel
 Web/tmp
 Web/pans
+Web/cpanfile.snapshot
 Ansible/playbook*
 data/
