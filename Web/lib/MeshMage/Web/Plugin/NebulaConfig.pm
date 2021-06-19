@@ -31,7 +31,7 @@ sub make_nebula_config ( $c, $node ) {
     $str   .= "  serve_dns: " . ( $node->is_lighthouse ? 'true' : 'false' ) . "\n";
     $str   .= "  interval: 60\n";
     $str   .= "  hosts:\n";
-    $str   .= $lighthouse_hosts if $node->is_lighthouse;
+    $str   .= $lighthouse_hosts unless $node->is_lighthouse;
     $str   .= "\n";
     $str   .= "listen:\n";
     $str   .= "  host: 0.0.0.0\n";
