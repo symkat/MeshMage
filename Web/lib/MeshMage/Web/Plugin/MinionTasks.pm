@@ -30,7 +30,7 @@ sub register ( $self, $app, $config ) {
                     unless $count == 1;
 
                 # Create the network cert and signing key.
-                run3( [ $job->app->config->{nebula}->{nebula_cert}, 'ca',
+                run3( [ $job->app->nebula_cert, 'ca',
                     '-out-crt', $job->app->filepath_for(nebula => $network->id, 'ca.crt'),
                     '-out-key', $job->app->filepath_for(nebula => $network->id, 'ca.key'),
                     '-name'   , $network_name,
@@ -104,7 +104,7 @@ sub register ( $self, $app, $config ) {
         };
     });
 
-    $app->minion->add_task( deploy_node => sub ( $job, $node_id, $key_id, $deploy_ip ) {
+    $app->minion->add_task( deploy_node => sub ( $job, $node_id, $key_id, $deploy_ip, $platform ) {
         my $node = $job->app->db->resultset('Node')->find( $node_id );
         my @lighthouses = $node->network->search_related( 'nodes', { is_lighthouse => 1 } );
 
@@ -127,6 +127,7 @@ sub register ( $self, $app, $config ) {
         print $playbook "    ansible_ssh_common_args: -oControlMaster=auto -oControlPersist=60s -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no\n";
         print $playbook "    domain: " . $node->hostname . "\n";
         print $playbook "    meshnet_store: " . $job->app->filepath_for( 'nebula' ) . "\n";
+        print $playbook "    nebula_binary: " . $job->app->nebula_for( $platform ) . "\n";
         print $playbook "    network_id: " . $node->network->id . "\n";
         print $playbook "    node:\n";
         print $playbook "      is_lighthouse: " . $node->is_lighthouse . "\n"; 
@@ -194,7 +195,7 @@ sub register ( $self, $app, $config ) {
             ( $public ? ( public_ip => $public ) : () ),
         });
 
-        my $command = [ $job->app->config->{nebula}->{nebula_cert}, 'sign',
+        my $command = [ $job->app->nebula_cert, 'sign',
             '-ca-crt',  $job->app->filepath_for( nebula => $network->id, "ca.crt" ),
             '-ca-key',  $job->app->filepath_for( nebula => $network->id, "ca.key" ),
             '-name',    $domain,

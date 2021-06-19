@@ -2,7 +2,7 @@
 - name: Install nebula binary
   copy:
     dest: /usr/local/sbin/nebula
-    src: "{{ role_path }}/files/nebula"
+    src: "{{ nebula_binary }}"
     owner: root
     group: root
     mode: 0755

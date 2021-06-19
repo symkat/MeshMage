@@ -11,7 +11,12 @@ sub deploy ($c) {
     my $node = $c->db->resultset('Node')->find( $c->param('node_id') );
     my @keys = $c->db->resultset('Sshkey')->all();
 
-    $c->stash( node => $node, sshkeys => \@keys );
+    $c->stash( 
+        node      => $node,
+        sshkeys   => \@keys,
+        platforms => $c->nebula_platforms,
+        
+    );
 }
 
 sub create ($c) {
@@ -19,7 +24,12 @@ sub create ($c) {
     my $node = $c->db->resultset('Node')->find( $c->param('node_id') );
 
     my $job_id = $c->minion->enqueue(
-        deploy_node => [ $node->id, $c->param('sshkey_id'), $c->param('deploy_ip') ],
+        deploy_node => [ 
+            $node->id, 
+            $c->param('sshkey_id'), 
+            $c->param('deploy_ip'),
+            $c->param('platform'),
+        ],
         { notes => { $node->hostname => 1 } }
     );
 

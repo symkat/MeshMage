@@ -37,6 +37,15 @@
             </select>
         </div>
 
+        <div class="mb-3">
+            <label for="platform">Target Platform</label>
+            <select class="form-control" name="platform" id="platform">
+%%          for $platforms -> $platform {
+                <option value="[% $platform %]">[% $platform %]</option>
+%%          }
+            </select>
+        </div>
+
         %% include '_base/form/input.tx' { type => 'text', name => 'deploy_ip',
         %%   title => 'SSH IP',
         %%   help  => 'This is the IP that MeshMage will connect to to install Nebula',
