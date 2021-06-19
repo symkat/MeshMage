@@ -6,12 +6,23 @@ sub register ( $self, $app, $config ) {
 
     $app->helper( filepath_for => sub ( $c, $type, @file_segments ) {
 
+        return undef unless $type;
+
+        # Ensure whatever directory we're getting the filepath for
+        # exists.
+        make_path( sprintf( "%s/%s",
+            $c->config->{filestore}{prefix},
+            $c->config->{filestore}{$type}
+        ));
+
+        # Handle the case of ->( 'type', 'subdir1', 'subdir2', ..., )
         return sprintf( "%s/%s/%s",
             $c->config->{filestore}{prefix},
             $c->config->{filestore}{$type},
             join( "/", @file_segments ),
         ) if @file_segments;
 
+        # Handle the standard case.
         return sprintf( "%s/%s",
             $c->config->{filestore}{prefix},
             $c->config->{filestore}{$type},
