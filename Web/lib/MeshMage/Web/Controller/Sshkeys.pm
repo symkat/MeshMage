@@ -18,11 +18,11 @@ sub create ($c) {
 
     if ( $c->param('key_method') eq 'generate' ) {
         $c->minion->enqueue( 'generate_sshkey' => [ $c->param('key_desc') ]);
+        $c->redirect_to( $c->url_for( 'dashboard' )->query( notice => 'ssh-generate' ) );
     } else {
-        $c->minion->enqueue( 'import_sshkey' => [ $c->param('key_desc'), $c->param('private_key'), $c->param('public_key') ])
+        $c->minion->enqueue( 'import_sshkey' => [ $c->param('key_desc'), $c->param('private_key'), $c->param('public_key') ]);
+        $c->redirect_to( $c->url_for( 'dashboard' )->query( notice => 'ssh-import' ) );
     }
-    
-    $c->redirect_to( '/sshkeys' );
 }
 
 1;

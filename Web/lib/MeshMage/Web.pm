@@ -69,7 +69,7 @@ sub startup ($self) {
 
     # Normal route to controller
     $r->get('/')                     ->to('Dashboard#index');
-    $r->get('/dashboard')            ->to('Dashboard#index');
+    $r->get('/dashboard')            ->to('Dashboard#index')->name( 'dashboard' );
 
 }
 

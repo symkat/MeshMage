@@ -4,6 +4,17 @@
 
 %% override panel -> {
 
+%%  if ( $notice ) {
+    <div style="margin-top: 2em" class="alert alert-success" role="alert">
+%%      if ( $notice == 'ssh-generate' ) {
+            Your ssh key is being generated, it should display below when complete.
+%%      }
+%%      if ( $notice == 'ssh-import' ) {
+            Your ssh key is being imported, it should display below when complete.
+%%      }
+    </div>
+%%  }
+
 %%  if ( $networks.size() ) {
     <h2 style="margin-top: 2em" class="h2">Networks</h2>
     <table class="table">
