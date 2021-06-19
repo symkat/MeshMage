@@ -1,0 +1,16 @@
+%%  cascade _base::layout { title => "List Nodes",
+%%      sb_active => 'dashboard'
+%%  }
+
+%% override panel -> {
+    <nav style="margin-top: 2em;" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="[% $c.url_for( 'dashboard' ) %]">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Nodes</li>
+        </ol>
+    </nav>
+
+%%  include 'dashboard/_panels/nodes_table.tx'
+
+%%  }
+

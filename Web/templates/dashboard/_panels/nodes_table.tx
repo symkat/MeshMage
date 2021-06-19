@@ -1,0 +1,29 @@
+%%  if ( $nodes.size() ) {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Hostname</th>
+                <th>Network</th>
+                <th>Nebula IP</th>
+                <th>Public IP</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+%%          for $nodes -> $node {
+            <tr>
+                <td>[% $node.hostname %]</td>
+                <td>[% $node.network.name %]</td>
+                <td>[% $node.nebula_ip %]</td>
+                <td>[% $node.public_ip %]</td>
+                <td>
+                    <a href="[% $c.url_for( 'view_node', {'node_id', $node.id} ) %]"
+                       title="View Node Details"
+                       ><span data-feather="arrow-right"></span></a>
+                </td>
+
+            </tr>
+%%          }
+        </tbody>
+    </table>
+%%  }

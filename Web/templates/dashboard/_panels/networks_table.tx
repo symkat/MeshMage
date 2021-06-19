@@ -1,0 +1,20 @@
+%%  if ( $networks.size() ) {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Network</th>
+                <th>Network TLD</th>
+                <th>Address Space</th>
+            </tr>
+        </thead>
+        <tbody>
+%%          for $networks -> $network {
+            <tr>
+                <td>[% $network.name %]</td>
+                <td>[% $network.tld %]</td>
+                <td>[% $network.address %]</td>
+            </tr>
+%%          }
+        </tbody>
+    </table>
+%%  }

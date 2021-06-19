@@ -1,0 +1,22 @@
+%%  if ( $sshkeys.size() ) {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Description</th>
+                <th>View Key</th>
+            </tr>
+        </thead>
+        <tbody>
+%%          for $sshkeys -> $sshkey {
+            <tr>
+                <td>[% $sshkey.id %]</td>
+                <td>[% $sshkey.name %]</td>
+                <td><a href="[% $c.url_for( 'view_sshkey', 'sshkey_id', $sshkey.id ) %]"
+                       title="View SSH Public Key" 
+                       ><span data-feather="arrow-right"></span></a></td>
+            </tr>
+%%          }
+        </tbody>
+    </table>
+%%  }

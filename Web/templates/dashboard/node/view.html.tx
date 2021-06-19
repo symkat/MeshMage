@@ -1,0 +1,53 @@
+%%  cascade _base::layout { title => "Show Node",
+%%      sb_active => 'dashboard'
+%%  }
+
+%% override panel -> {
+    <nav style="margin-top: 2em;" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="[% $c.url_for( 'dashboard' ) %]">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="[% $c.url_for( 'list_nodes' ) %]">Nodes</a></li>
+            <li class="breadcrumb-item active" aria-current="page">[% $node.hostname %]</li>
+        </ol>
+    </nav>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Hostname</th>
+                <th>Network</th>
+                <th>Nebula IP</th>
+                <th>Public IP</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="/deploy/[% $node.id %]">[% $node.hostname %]</a></td>
+                <td>[% $node.network.name %]</td>
+                <td>[% $node.nebula_ip %]</td>
+                <td>[% $node.public_ip %]</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 style="margin-top: 2em" class="h2">Jobs</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody>
+%%          while $jobs.next() -> $job {
+            <tr>
+                <td><a href="/minion/jobs?id=[% $job.id %]">[% $job.id %]</a></td>
+                <td>[% $job.task %]</td>
+                <td>[% $job.state %]</td>
+            </tr>
+%%          }
+        </tbody>
+    </table>
+
+%% }

@@ -68,9 +68,14 @@ sub startup ($self) {
     $r->post  ('/sshkeys')            ->to('Sshkeys#create');
 
     # Normal route to controller
-    $r->get('/')                     ->to('Dashboard#index');
-    $r->get('/dashboard')            ->to('Dashboard#index')->name( 'dashboard' );
-
+    $r->get('/')                               ->to('Dashboard#index');
+    $r->get('/dashboard')                      ->to('Dashboard#index')        ->name( 'dashboard' );
+    $r->get('/dashboard/nodes')                ->to('Dashboard::Node#list')   ->name( 'list_nodes' );
+    $r->get('/dashboard/node/:node_id')        ->to('Dashboard::Node#view')   ->name( 'view_node' );
+    $r->get('/dashboard/networks')             ->to('Dashboard::Network#list')->name( 'list_networks' );
+    $r->get('/dashboard/networks/:network_id') ->to('Dashboard::Network#view')->name( 'view_network' );
+    $r->get('/dashboard/sshkeys')              ->to('Dashboard::Sshkeys#list')->name( 'list_sshkeys' );
+    $r->get('/dashboard/sshkeys/:sshkey_id')   ->to('Dashboard::Sshkeys#view')->name( 'view_sshkey' );
 }
 
 1;

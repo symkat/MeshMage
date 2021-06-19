@@ -15,72 +15,22 @@
     </div>
 %%  }
 
-%%  if ( $networks.size() ) {
-    <h2 style="margin-top: 2em" class="h2">Networks</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Network</th>
-                <th>Network TLD</th>
-                <th>Address Space</th>
-            </tr>
-        </thead>
-        <tbody>
-%%          for $networks -> $network {
-            <tr>
-                <td>[% $network.name %]</td>
-                <td>[% $network.tld %]</td>
-                <td>[% $network.address %]</td>
-            </tr>
-%%          }
-        </tbody>
-    </table>
-%%  }
+    <h2 style="margin-top: 2em" class="h2">Node Listing
+        <a href="[% $c.url_for( 'list_nodes' ) %]" title="View Node List"><span data-feather="arrow-right"></span></a>
+    </h2>
+%%  include 'dashboard/_panels/nodes_table.tx'
 
-%%  if ( $sshkeys.size() ) {
-    <h2 style="margin-top: 2em" class="h2">Existing Keys</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Description</th>
-                <th>View Key</th>
-            </tr>
-        </thead>
-        <tbody>
-%%          for $sshkeys -> $sshkey {
-            <tr>
-                <td>[% $sshkey.id %]</td>
-                <td>[% $sshkey.name %]</td>
-                <td><a href="/sshkeys/[% $sshkey.id %]"><span data-feather="key"></span></a></td>
-            </tr>
-%%          }
-        </tbody>
-    </table>
-%%  }
+    <h2 style="margin-top: 2em" class="h2">Network Listing
+        <a href="[% $c.url_for( 'list_networks' ) %]" title="View Network List"><span data-feather="arrow-right"></span></a>
+    </h2>
+%%  include 'dashboard/_panels/networks_table.tx'
 
-%%  if ( $nodes.size() ) {
-    <h2 style="margin-top: 2em" class="h2">Machines</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Hostname</th>
-                <th>Network</th>
-                <th>Nebula IP</th>
-                <th>Public IP</th>
-            </tr>
-        </thead>
-        <tbody>
-%%          for $nodes -> $node {
-            <tr>
-                <td>[% $node.hostname %]</td>
-                <td>[% $node.network.name %]</td>
-                <td>[% $node.nebula_ip %]</td>
-                <td>[% $node.public_ip %]</td>
-            </tr>
-%%          }
-        </tbody>
-    </table>
-%%  }
+
+    <h2 style="margin-top: 2em" class="h2">SSH Keys Listing
+        <a href="[% $c.url_for( 'list_sshkeys' ) %]" title="View SSH Keys List"><span data-feather="arrow-right"></span></a>
+    </h2>
+%%  include 'dashboard/_panels/sshkeys_table.tx'
+
+
 
 %% }

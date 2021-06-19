@@ -1,0 +1,21 @@
+%%  cascade _base::layout { title => "Show SSH Keys",
+%%      sb_active => 'dashboard'
+%%  }
+
+%% override panel -> {
+    <nav style="margin-top: 2em;" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="[% $c.url_for( 'dashboard' ) %]">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="[% $c.url_for( 'list_sshkeys' ) %]">SSH Keys</a></li>
+            <li class="breadcrumb-item active" aria-current="page">[% $key.info.name %]</li>
+        </ol>
+    </nav>
+
+%%  include 'dashboard/_panels/sshkeys_table.tx' { sshkeys => [ $key.info ] }
+
+    <div class="mb-3">
+        <label for="private_key">SSH Public Key</label>
+        <textarea disabled class="form-control" id="private_key" name="private_key" rows="12">[% $key.content %]</textarea>
+    </div>
+
+%% }

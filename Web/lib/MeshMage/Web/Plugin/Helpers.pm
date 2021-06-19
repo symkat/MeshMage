@@ -1,6 +1,7 @@
 package MeshMage::Web::Plugin::Helpers; 
 use Mojo::Base 'Mojolicious::Plugin', -signatures;
 use File::Find;
+use File::Path qw( make_path );
 
 sub register ( $self, $app, $config ) {
 
