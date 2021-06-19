@@ -1,12 +1,21 @@
 ---
 secrets:
   - Random String To Use For Mojolicious Secrets
-nebula:
-  nebula_cert: Full path to nebula-cert binary
-  nebula: Full path to nebula binary
-  store: Full path for directory to put Nebula network/certs into
-sshkey:
-  store: Full path for directory to put ssh keys into
-ansible:
-  rundir: Full path to Ansible directory
 
+# store: The directory that contains the nebula binaries.
+# use:   The platform that MeshMage is running on.
+nebula:
+  store: /home/meshmage/MeshMage/.nebula
+  use: linux/amd64
+
+# rundir: The directory to run ansible-playbook in.
+ansible:
+  rundir: /home/meshmage/MeshMage/Ansible
+
+# prefix: top-level directory to store files in.
+# sshkey: directory for ssh priv/pub keypairs.
+# nebula: directory for nebula key/crt/yml files.
+filestore:
+  prefix: /home/meshmage/MeshMage/data
+  sshkey: sshkeys
+  nebula: nebula
