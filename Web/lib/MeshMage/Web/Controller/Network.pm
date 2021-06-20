@@ -13,7 +13,7 @@ sub create ($c) {
         $c->param('network_name'), $c->param('network_tld'), $c->param('network_cidr') 
     ]);
     
-    $c->redirect_to( '/network' );
+    $c->redirect_to( $c->url_for( 'dashboard' )->query( notice => 'network-created' ) );
 }
 
 1;

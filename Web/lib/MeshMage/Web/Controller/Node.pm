@@ -14,17 +14,7 @@ sub create ($c) {
         $c->param('network_id'), $c->param('is_lighthouse'), $c->param('hostname'), $c->param('address'), $c->param('public_address')
     ]);
 
-    $c->redirect_to( '/node' );
-}
-
-sub show ($c) {
-    my $node = $c->db->resultset('Node')->find( $c->param('node_id') );
-    my $jobs = $c->minion->jobs( { notes => [ $node->hostname ] } );
-
-    $c->stash(
-        node => $node,
-        jobs => $jobs,
-    );
+    $c->redirect_to( $c->url_for( 'dashboard' )->query( notice => 'node-created' ) );
 }
 
 1;

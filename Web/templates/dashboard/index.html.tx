@@ -12,6 +12,12 @@
 %%      if ( $notice == 'ssh-import' ) {
             Your ssh key is being imported, it should display below when complete.
 %%      }
+%%      if ( $notice == 'node-created' ) {
+            Your node has been created, it should display below when its certs are generated.
+%%      }
+%%      if ( $notice == 'network-created' ) {
+            Your network has been created, it should display below when its certs are generated.
+%%      }
     </div>
 %%  }
 
