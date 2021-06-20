@@ -19,4 +19,18 @@
 %%          }
         </tbody>
     </table>
+%%  } else {
+    <div style="margin-top: 2em" class="alert alert-warning" role="alert">
+        <strong>You have no SSH Keys defined.</strong>
+    </div>
+
+    <p>SSH Keys are used for automatic deployment.  When you request a node is automatically
+    deployed, an Ansible playbook will run against the machine to install Nebula, as well as
+    configuration files and keys related to the node so that it may join the network.</p>
+
+    <p>You can either import an existing SSH Keypair, or one can be generated for you and you
+    will need to add the public key to the node.</p>
+
+    <p>You can click the <a href="[% $c.url_for( '/sshkeys' ) %]" title="Create SSH Keys"><span data-feather="plus-circle"></span></a>
+    icon here, or to the right of <strong>SSH Keys</strong> above to import or generate a keypair.</p>
 %%  }

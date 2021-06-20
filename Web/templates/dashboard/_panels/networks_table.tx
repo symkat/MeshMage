@@ -17,4 +17,24 @@
 %%          }
         </tbody>
     </table>
-%%  }
+%%  } else {
+    <div style="margin-top: 2em" class="alert alert-warning" role="alert">
+        <strong>You have no networks defined.</strong>
+    </div>
+
+    <p>Creating a network is the first step to deploying your MeshNet.  The network needs a 
+    name, top-level domain, and IP range.</p>
+
+    <p>The name can be anything you want and helps you see the network on MeshMage.</p>
+
+    <p>For the top-level domain, to use DNS the domain name should be one you own and can 
+    deligate DNS on, for example if you own example.com, you could use mn.example.com 
+    as the top-level domain, and then each node would live under this domain, like 
+    node1.mn.example.com.</p>
+
+    <p>The IP range should be a private range that doesn't conflict with LANs you already use,
+    perhaps <strong>192.168.25.1/24</strong>.
+
+    <p>You can click the <a href="[% $c.url_for( '/network' ) %]" title="Create Network"><span data-feather="plus-circle"></span></a>
+    icon here, or to the right of <strong>Networks</strong> above to define a network.</p>
+%% }
