@@ -34,7 +34,7 @@ sub register ( $self, $app, $config ) {
     # Helpers to get the nebula/nebula_cert binary paths for the
     # system running MeshMage.
     $app->helper( nebula_cert => sub ($c) { 
-        return state $nebula_cert = sprintf( "%s/%s/nebula_cert",
+        return state $nebula_cert = sprintf( "%s/%s/nebula-cert",
             $c->config->{nebula}{store}, $c->config->{nebula}{use}
         );
     });
