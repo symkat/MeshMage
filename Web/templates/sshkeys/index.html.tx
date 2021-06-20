@@ -3,26 +3,6 @@
 %%  }
 
 %% override panel -> {
-
-%%  if ( $sshkeys.size() ) {
-    <h2 style="margin-top: 2em" class="h2">Existing Keys</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-%%          for $sshkeys -> $sshkey {
-            <tr>
-                <td>[% $sshkey.id %]</td>
-                <td>[% $sshkey.name %]</td>
-            </tr>
-%%          }
-        </tbody>
-    </table>
-%%  }
     <h2 style="margin-top: 1.5em" class="h2">Add SSH Key</h2>
 
     <p>To use automatic deployment, you'll need to add an SSH key.  This key will be expected to work for root@ on the machine being deployed to.  You can import an SSH key or generate one</p>
