@@ -11,24 +11,7 @@
         </ol>
     </nav>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Hostname</th>
-                <th>Network</th>
-                <th>Nebula IP</th>
-                <th>Public IP</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><a href="/deploy/[% $node.id %]">[% $node.hostname %]</a></td>
-                <td>[% $node.network.name %]</td>
-                <td>[% $node.nebula_ip %]</td>
-                <td>[% $node.public_ip %]</td>
-            </tr>
-        </tbody>
-    </table>
+%%  include 'dashboard/_panels/nodes_table.tx' { nodes => [ $node ] }
 
     <h2 style="margin-top: 2em" class="h2">Jobs</h2>
     <table class="table">
