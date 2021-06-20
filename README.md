@@ -52,6 +52,8 @@ chmod 0600 /home/meshmage/.ssh/authorized_keys
 
 5. Install MeshMage
 
+The previous 4 steps were all done as root.  For this step, you'll need to login as the meshmage user.
+
 ```bash
 cpanm App::plx App::opan App::Dex Carton Dist::Zilla
 GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
