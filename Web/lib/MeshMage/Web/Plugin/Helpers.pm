@@ -48,7 +48,11 @@ sub register ( $self, $app, $config ) {
     # Helper to get the nebula binary path for systems we're uploading
     # to.
     $app->helper( nebula_for => sub ($c, $platform) {
-        return sprintf("%s/%s/nebula", $c->config->{nebula}{store}, $platform);
+        if ( $platform =~ m|^windows/| ) {
+            return sprintf("%s/%s/nebula.exe", $c->config->{nebula}{store}, $platform);
+        } else {
+            return sprintf("%s/%s/nebula", $c->config->{nebula}{store}, $platform);
+        }
     });
 
     # Helper to memoize the platforms list.

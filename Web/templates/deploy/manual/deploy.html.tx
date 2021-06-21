@@ -1,5 +1,5 @@
 %%  cascade _base::layout { title => "Configure Node",
-%%      sb_active => 'deploy_manual'
+%%      sb_active => 'dashboard'
 %%  }
 
 %% override panel -> {
@@ -33,6 +33,15 @@
 
     <h2 style="margin-top: 1.5em" class="h2">Configuration Files</h2>
     
+    <div class="mb-3">
+        <label for="platform">Download Nebula Binary</label>
+        <select class="form-control" name="platform" id="platform" onchange="location = this.value">
+            <option value="">Select Platform</option>
+%%          for $platforms -> $platform {
+            <option value="/download?platform=[% $platform %]">[% $platform %]</option>
+%%          }
+        </select>
+    </div>
     
     <div class="mb-3">
         <label for="ca_crt">ca.crt</label>

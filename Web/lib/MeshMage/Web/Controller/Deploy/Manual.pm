@@ -17,11 +17,12 @@ sub deploy ($c) {
     my $key  = Mojo::File->new( $c->filepath_for( nebula => $n_id, $host . '.key') )->slurp;
 
     $c->stash( 
-        node => $node,
-        ca   => $ca,
-        cert => $cert,
-        key  => $key,
-        conf => $c->make_nebula_config( $node ),
+        node      => $node,
+        ca        => $ca,
+        cert      => $cert,
+        key       => $key,
+        conf      => $c->make_nebula_config( $node ),
+        platforms => $c->nebula_platforms,
      );
 }
 
