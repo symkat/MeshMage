@@ -59,22 +59,5 @@
           </li>
         </ul>
         -->
-        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-          <span>Deployment</span>
-        </h6>
-        <ul class="nav flex-column mb-2">
-          <li class="nav-item">
-            <a class="nav-link [% $sb_active == "deploy_automatic" ? "active" : "" %]" href="/deploy/automatic">
-              <span data-feather="hard-drive"></span>
-              Remote Node
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link [% $sb_active == "deploy_manual" ? "active" : "" %]" href="/deploy/manual">
-              <span data-feather="user"></span>
-              Manual Setup
-            </a>
-          </li>
       </div>
     </nav>

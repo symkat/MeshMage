@@ -3,6 +3,14 @@
 %%  }
 
 %% override panel -> {
+    <nav style="margin-top: 2em;" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="[% $c.url_for( 'dashboard' ) %]">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="[% $c.url_for( 'list_nodes' ) %]">Nodes</a></li>
+            <li class="breadcrumb-item"><a href="[% $c.url_for( 'view_node', 'node_id', $node.id ) %]">[% $node.hostname %]</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Automatic Deploy</li>
+        </ol>
+    </nav>
 
     <table style="margin-top: 2em" class="table">
         <thead>

@@ -53,12 +53,10 @@ sub startup ($self) {
     $r->post  ('/node')              ->to('Node#create');
 
     # Deployment
-    $r->get   ('/deploy/automatic' )          ->to('Deploy::Automatic#index' );
-    $r->get   ('/deploy/automatic/:node_id' ) ->to('Deploy::Automatic#deploy');
+    $r->get   ('/deploy/automatic/:node_id' ) ->to('Deploy::Automatic#deploy')->name('deploy_automatic');
     $r->post  ('/deploy/automatic' )          ->to('Deploy::Automatic#create');
 
-    $r->get   ('/deploy/manual' )          ->to('Deploy::Manual#index' );
-    $r->get   ('/deploy/manual/:node_id' ) ->to('Deploy::Manual#deploy');
+    $r->get   ('/deploy/manual/:node_id' ) ->to('Deploy::Manual#deploy')->name('deploy_manual');
     $r->post  ('/deploy/manual' )          ->to('Deploy::Manual#create');
 
     # Manage SSH Keys
