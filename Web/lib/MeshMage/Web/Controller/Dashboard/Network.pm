@@ -9,8 +9,9 @@ sub list ($c) {
 
 sub view ($c) {
     my $network = $c->db->resultset('Network')->find( $c->param('network_id') );
+    my $jobs    = $c->minion->jobs( { notes => [ $network->tld ] } );
 
-    $c->stash( network => $network );
+    $c->stash( network => $network, jobs => $jobs );
 }
 
 1;

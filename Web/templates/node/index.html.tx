@@ -13,19 +13,34 @@
     
     <h2 style="margin-top: 1.5em" class="h2">Create Node</h2>
 
+%% if ( $errors.size() ) { 
+    <div style="margin-top: 2em" class="alert alert-danger" role="alert">
+        There were errors with your request that could not be resolved:
+        <ul>
+%%      for $errors -> $error {
+            <li>[% $error %]</li>
+%%  } 
+        </ul>
+    </div>
+%%  } 
+
+
     <form style="margin-top: 1.5em" method="POST" action="/node">
 
         <div class="mb-3">
             <label for="network_id">Network</label>
             <select class="form-control" name="network_id" id="network_id">
+                <option value="">Choose Network</option>
 %%          for $networks -> $network {
-                <option value="[% $network.id %]">[% $network.name %] ([% $network.address %])</option>
+%%              my $is_selected = ( $network.id == $form_network_id ? "selected" : "" );
+                <option [% $is_selected %] value="[% $network.id %]">[% $network.name %] ([% $network.address %])</option>
 %%          }
             </select>
         </div>
 
         <div class="mb-3">
-            <input type="checkbox" class="form-check-input" id="is_lighthouse" name="is_lighthouse">
+%%          my $lh_is_sel = ( $form_is_lighthouse ? "checked" : "" ); # Is this a lighthouse?
+            <input [% $lh_is_sel %] type="checkbox" class="form-check-input" id="is_lighthouse" name="is_lighthouse">
             <label class="form-check-label" for="is_lighthouse">This node is a lighthouse.</label>
         </div>
 

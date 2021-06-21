@@ -50,7 +50,7 @@ sub startup ($self) {
 
     # Connect Nodes
     $r->get   ('/node')              ->to('Node#index');
-    $r->post  ('/node')              ->to('Node#create');
+    $r->post  ('/node')              ->to('Node#create')->name( 'create_node' );
 
     # Deployment
     $r->get   ('/deploy/automatic/:node_id' ) ->to('Deploy::Automatic#deploy')->name('deploy_automatic');
@@ -87,7 +87,7 @@ sub startup ($self) {
     $r->get('/dashboard/nodes')                ->to('Dashboard::Node#list')   ->name( 'list_nodes' );
     $r->get('/dashboard/node/:node_id')        ->to('Dashboard::Node#view')   ->name( 'view_node' );
     $r->get('/dashboard/networks')             ->to('Dashboard::Network#list')->name( 'list_networks' );
-    $r->get('/dashboard/networks/:network_id') ->to('Dashboard::Network#view')->name( 'view_network' );
+    $r->get('/dashboard/network/:network_id')  ->to('Dashboard::Network#view')->name( 'view_network' );
     $r->get('/dashboard/sshkeys')              ->to('Dashboard::Sshkeys#list')->name( 'list_sshkeys' );
     $r->get('/dashboard/sshkeys/:sshkey_id')   ->to('Dashboard::Sshkeys#view')->name( 'view_sshkey' );
 }

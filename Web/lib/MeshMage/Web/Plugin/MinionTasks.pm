@@ -13,34 +13,30 @@ sub register ( $self, $app, $config ) {
     # This task will create the network directory and keys.  The directory is expected
     # to be new, if it already exists we'll throw an error.
     #
-    $app->minion->add_task( create_network_cert => sub ( $job, $network_name, $network_tld, $network_cidr ) {
+    $app->minion->add_task( create_network_cert => sub ( $job, $network_id ) {
 
-        try {
-            $job->app->db->txn_do(sub {
-                # Add this network to the DB.
-                my $network = $job->app->db->resultset('Network')->create({
-                    name    => $network_name,
-                    tld     => $network_tld,
-                    address => $network_cidr,
-                });
+        my $network = $job->app->db->resultset('Network')->find( $network_id );
 
-                # Create the storage location for this network.
-                my $count = make_path($job->app->filepath_for(nebula => $network->id));
-                die "Error: refusing to overwrite an existing network directory.\n"
-                    unless $count == 1;
+        if ( ! $network ) {
+            $job->fail( "No network with ID $network_id" );
+            return;
+        }
 
-                # Create the network cert and signing key.
-                run3( [ $job->app->nebula_cert, 'ca',
-                    '-out-crt', $job->app->filepath_for(nebula => $network->id, 'ca.crt'),
-                    '-out-key', $job->app->filepath_for(nebula => $network->id, 'ca.key'),
-                    '-name'   , $network_name,
-                ]);
-            });
-        } catch {
-            $job->fail( $_ );
-        } finally {
-            $job->finish() unless shift;
-        };
+        my $network_path = $job->app->filepath_for(nebula => $network->id);
+
+        my $count = make_path($network_path);
+        if ( $count != 1 ) {
+            $job->fail("Existing network found at $network_path, delete this directory and retry this job.");
+            return;
+        }
+
+        run3( [ $job->app->nebula_cert, 'ca',
+            '-out-crt', "$network_path/ca.crt",
+            '-out-key', "$network_path/ca.key",
+            '-name'   , $network->name,
+        ]);
+
+        $job->finish();
     });
 
     # generate_sshkey
@@ -150,50 +146,22 @@ sub register ( $self, $app, $config ) {
         ]);
     });
     
-    # create_node
+    # create_node_cert
     #
     # Create the nebula certs for the node and sign them.
     #
-    $app->minion->add_task( create_node => sub ( $job, $network_id, $is_lighthouse, $hostname, $address, $public ) {
-        my $network = $job->app->db->resultset('Network')->find( $network_id );
+    $app->minion->add_task( create_node_cert => sub ( $job, $node_id ) {
 
-        # Make sure hostname is plain word, or matches the TLD for the network.
-        if ( index($hostname, '.') != -1 ) {
-            my $tld   = $network->tld;
-
-            $job->fail( "Error: $hostname must be plain word or FQDN ending with $tld" )
-                unless $hostname =~ /\.\Q$tld\E$/;
-            return;
-        }
-        
-        # Set $domain to the FQDN for this node.
-        my $domain = index($hostname, '.') >= 0
-            ? $hostname
-            : sprintf( "%s.%s", $hostname, $network->tld );
-
-        # Make sure the IP address isn't used. -- Should overlapping networks be allowed?
-        my $ip_is_used = $job->app->db->resultset('Node')->search( { nebula_ip => $address } )->count;
-        if ( $ip_is_used ) {
-            $job->fail( "IP address for Nebula, $address, is already used." );
+        my $node = $job->app->db->resultset('Node')->find( $node_id );
+        if ( ! $node ) {
+            $job->fail( "No node with id $node_id was found" );
             return;
         }
 
-        # Make sure the address we're using is within the defined cidr for the network we're adding
-        # the node to.
-        my $is_in_network = subnet_matcher $network->address;
-        if ( ! $is_in_network->($address) ) {
-            $job->fail( "IP address for Nebula, $address, is not in range " . $network->address );
-            return;
-        }
-
-        my $cidr = (split( /\//, $network->address))[1];
-
-        $network->create_related( 'nodes', {
-            hostname      => $domain,
-            nebula_ip     => $address,
-            is_lighthouse => $is_lighthouse ? 1 : 0,
-            ( $public ? ( public_ip => $public ) : () ),
-        });
+        my $network = $node->network;
+        my $domain  = $node->hostname;
+        my $cidr    = (split( /\//, $network->address))[1];
+        my $address = $node->nebula_ip;
 
         my $command = [ $job->app->nebula_cert, 'sign',
             '-ca-crt',  $job->app->filepath_for( nebula => $network->id, "ca.crt" ),
