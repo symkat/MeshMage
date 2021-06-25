@@ -17,14 +17,6 @@
                 <td>[% $node.nebula_ip %]</td>
                 <td>[% $node.public_ip %]</td>
                 <td>
-                    <a href="[% $c.url_for( 'deploy_automatic', {'node_id', $node.id} ) %]"
-                       title="Automatically Deploy Node"
-                       ><span data-feather="upload-cloud"></span></a>
-                    &nbsp;
-                    <a href="[% $c.url_for( 'deploy_manual', {'node_id', $node.id} ) %]"
-                       title="Manually Deploy Node"
-                       ><span data-feather="download-cloud"></span></a>
-                    &nbsp;
                     <a href="[% $c.url_for( 'view_node', {'node_id', $node.id} ) %]"
                        title="View Node Details"
                        ><span data-feather="arrow-right"></span></a>

@@ -8,7 +8,7 @@
             <li class="breadcrumb-item"><a href="[% $c.url_for( 'dashboard' ) %]">Dashboard</a></li>
             <li class="breadcrumb-item"><a href="[% $c.url_for( 'list_nodes' ) %]">Nodes</a></li>
             <li class="breadcrumb-item"><a href="[% $c.url_for( 'view_node', 'node_id', $node.id ) %]">[% $node.hostname %]</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Automatic Deploy</li>
+            <li class="breadcrumb-item active" aria-current="page">Manual Deploy</li>
         </ol>
     </nav>
 
