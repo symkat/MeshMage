@@ -13,58 +13,80 @@
 
 %%  include 'dashboard/_panels/nodes_table.tx' { nodes => [ $node ] }
 
+    <h4 style="margin-top: 2em" class="h4">Configure Node For Network</h4>
+    <p>Once a node is configured in MeshMage, you'll need to configure the
+    actual server or personal computer to connect to the network.  Select the
+    type of node this is to get configure the machine to connect to the network.</p>
 
-    <h2 style="margin-top: 2em" class="h2">Configure Node - Servers</h2>
+<div class="accordion" id="accordionExample">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingOne">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        Linux - Automatic Deployment &nbsp; <em><small>(Remote Server w/ SSH access)</small></em>
+      </button>
+    </h2>
+    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <p>Automatic deployment is supported on Linux machines that can be accessed over SSH from this server.  The next
+        page will allow you to choose an SSH Key and IP address for the connection to automatically configure this
+        node.</p>
 
-<div class="row">
-  <div class="col-sm-6">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Linux - Automatic</h5>
-        <p class="card-text">Use a built-in ansible role to deploy this node over SSH. (Tested for Debian 10 nodes)</p>
         <a title="Automatically Deploy Node" href="[% $c.url_for( 'deploy_automatic', {'node_id', $node.id} ) %]" 
-            class="btn btn-primary">Linux Automatic</a>
+            class="btn btn-primary">Let's Do It</a>
+        
       </div>
     </div>
   </div>
-  <div class="col-sm-6">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Manual</h5>
-        <p class="card-text">Choose this option to see the configuration file, keys, and download a Nebula binary for your platform.</p>
-        <a title="Manually Deploy Node" href="[% $c.url_for( 'deploy_manual', {'node_id', $node.id} ) %]" 
-            class="btn btn-primary">Manual</a>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingTwo">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        macOS Intel &nbsp; <em><small>Personal Computer</small></em>
+      </button>
+    </h2>
+    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
       </div>
     </div>
   </div>
-</div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingThree">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+        macOS M1 &nbsp; <em><small>Personal Computer</small></em>
+      </button>
+    </h2>
+    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingFour">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+        Windows &nbsp; <em><small>Personal Computer</small></em>
+      </button>
+    </h2>
+    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingFive">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+        Manual &nbsp; <em><small>(You Decide)</small></em>
+      </button>
+    </h2>
+    <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <p>Manual deployment gives you the keys, configuration file, and Nebula binary to configure any kind of node
+        that Nebula supports.  The next page will give you access to the keyfiles and configuration file, as well as
+        allow you to download Nebula for your platform.</p>
 
-    <h2 style="margin-top: 2em" class="h2">Configure Node - Personal Computer</h2>
-<div class="row">
-  <div class="col-sm-4">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">macOS Intel</h5>
-        <p class="card-text">Choose this option to connect a Mac computer with an Intel processor.</p>
-        <a href="#" class="btn btn-primary">macOS Intel</a>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-4">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">macOS M1</h5>
-        <p class="card-text">Choose this option to connect a Mac computer with an M1 processor.</p>
-        <a href="#" class="btn btn-primary">macOS M1</a>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-4">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Windows</h5>
-        <p class="card-text">Choose this option to connect a Windows computer.</p>
-        <a href="#" class="btn btn-primary">Windows</a>
+        <a title="Manually Deploy Node" href="[% $c.url_for( 'deploy_manual', {'node_id', $node.id} ) %]" 
+            class="btn btn-primary">Let's Do It</a>
       </div>
     </div>
   </div>
