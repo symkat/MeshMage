@@ -9,7 +9,10 @@ sub create ($c) {
         { notes => { $node->hostname => 1 } }
     );
 
-    $c->redirect_to( $c->url_for( 'view_node', node_id => $node->id ) );
+    $c->redirect_to( 
+        $c->url_for( 'view_node', node_id => $node->id )
+            ->query( pending => sprintf( "%s__macos_intel.tgz", $node->hostname ) )
+    );
 }
 
 1;
