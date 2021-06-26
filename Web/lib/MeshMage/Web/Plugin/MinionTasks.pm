@@ -125,14 +125,15 @@ sub register ( $self, $app, $config ) {
                                                                #        for everything.
 
         # Pack these files for the user.
-        Mojo::File->new( "$net_path/$domain.crt"      )->copy_to( $dir );
-        Mojo::File->new( "$net_path/$domain.key"      )->copy_to( $dir );
-        Mojo::File->new( "$net_path/$domain.yml"      )->copy_to( $dir );
-        Mojo::File->new( "$net_path/ca.crt"           )->copy_to( $dir );
-        Mojo::File->new( "$neb_path"                  )->copy_to( $dir );
-        Mojo::File->new( "$etc_path/install-macos.sh" )->copy_to( "$dir/install.sh" );
-        Mojo::File->new( "$etc_path/README-macos.txt" )->copy_to( "$dir/README.txt" );
-        Mojo::File->new( "$etc_path/Nebula.plist"     )->copy_to( $dir );
+        Mojo::File->new( "$net_path/$domain.crt"        )->copy_to( $dir );
+        Mojo::File->new( "$net_path/$domain.key"        )->copy_to( $dir );
+        Mojo::File->new( "$net_path/$domain.yml"        )->copy_to( $dir );
+        Mojo::File->new( "$net_path/ca.crt"             )->copy_to( $dir );
+        Mojo::File->new( "$neb_path"                    )->copy_to( $dir )->chmod(755);
+        Mojo::File->new( "$etc_path/uninstall-macos.sh" )->copy_to( "$dir/uninstall.sh" )->chmod(755);
+        Mojo::File->new( "$etc_path/install-macos.sh"   )->copy_to( "$dir/install.sh" )->chmod(755);
+        Mojo::File->new( "$etc_path/README-macos.txt"   )->copy_to( "$dir/README.txt" );
+        Mojo::File->new( "$etc_path/Nebula.plist"       )->copy_to( $dir );
 
         # my $outfile = $job->app->filepath_for( nebula => $net_id, "${domain}_macos_intel.tgz" )VC
         my $outfile = $job->app->download_dir . "${domain}_macos_intel.tgz";
