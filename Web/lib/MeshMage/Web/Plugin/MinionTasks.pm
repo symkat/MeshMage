@@ -5,6 +5,7 @@ use File::Path qw( make_path );
 use File::Temp;
 use Try::Tiny;
 use Net::Subnet;
+use Mojo::File;
 
 sub register ( $self, $app, $config ) {
 
@@ -98,6 +99,41 @@ sub register ( $self, $app, $config ) {
         } finally {
             $job->finish() unless shift;
         };
+    });
+    
+    $app->minion->add_task( create_macos_intel_bundle => sub ( $job, $node_id ) {
+        my $node   = $job->app->db->resultset('Node')->find( $node_id );
+        my $domain = $node->hostname; 
+        my $net_id = $node->network->id;
+
+        # TODO - This might need machine-specific configuration, let's abide that.
+        #
+        # Make Nebula Configuration File For Packing
+        Mojo::File->new( $job->app->filepath_for(nebula => $net_id, "$domain.yml"))
+            ->spurt( $job->app->make_nebula_config( $node ));
+
+        # Make a temp dir, and inside it put a nebula dir, we'll 
+        # end up taring up the nebula directory as the bundle.
+        my $tempdir = File::Temp->newdir();
+        my $dir     = "$tempdir/nebula";
+        make_path( $dir );
+
+        my $net_path = $job->app->filepath_for( nebula => $net_id );
+        my $neb_path = $job->app->nebula_for('darwin/amd64' ); # TODO - This can accept a platform, and
+                                                               #        and then we can use one bundle task
+                                                               #        for everything.
+
+        Mojo::File->new( "$net_path/$domain.crt" )->copy_to( $dir );
+        Mojo::File->new( "$net_path/$domain.key" )->copy_to( $dir );
+        Mojo::File->new( "$net_path/$domain.yml" )->copy_to( $dir );
+        Mojo::File->new( "$net_path/ca.crt"      )->copy_to( $dir );
+        Mojo::File->new( "$neb_path"             )->copy_to( $dir );
+
+        # my $outfile = $job->app->filepath_for( nebula => $net_id, "${domain}_macos_intel.tgz" )VC
+        my $outfile = $job->app->download_dir . "${domain}_macos_intel.tgz";
+
+        my $command = [qw( tar -C ), $tempdir, '-czf', $outfile, 'nebula' ];
+        run3( $command );
     });
 
     $app->minion->add_task( deploy_node => sub ( $job, $node_id, $key_id, $deploy_ip, $platform ) {

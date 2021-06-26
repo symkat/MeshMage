@@ -2,6 +2,7 @@ package MeshMage::Web;
 use Mojo::Base 'Mojolicious', -signatures;
 use MeshMage::DB;
 use Minion;
+use Mojo::File qw( curfile );
 
 # This method will run once at server start
 sub startup ($self) {
@@ -23,6 +24,11 @@ sub startup ($self) {
         'dbi:Pg:host=localhost;dbname=meshmage', 'meshmage', 'meshmage'
     );
     $self->helper( db => sub { return $db } );
+
+    # The location we'll stick files for download.
+    $self->helper( download_dir => sub {
+        sprintf( "%s/%s", $self->static->paths->[0], 'download/' ) 
+    });
 
     # Setup Minion Job Queue
     # NOTE: https://docs.mojolicious.org/Mojolicious/Plugin/Minion/Admin When auth exists,
@@ -58,6 +64,8 @@ sub startup ($self) {
 
     $r->get   ('/deploy/manual/:node_id' ) ->to('Deploy::Manual#deploy')->name('deploy_manual');
     $r->post  ('/deploy/manual' )          ->to('Deploy::Manual#create');
+    
+    $r->post  ('/deploy/macos' )           ->to('Deploy::MacOS#create')->name('deploy_macos');
 
     # Manage SSH Keys
     $r->get   ('/sshkeys')            ->to('Sshkeys#index');

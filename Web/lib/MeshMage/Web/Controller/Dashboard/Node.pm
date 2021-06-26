@@ -15,7 +15,8 @@ sub view ($c) {
     $c->stash(
         node => $node,
         jobs => $jobs,
-    );
+        ( $c->param('pending') ? ( pending => $c->param('pending') ) : () ),
+    ); 
 }
 
 1;

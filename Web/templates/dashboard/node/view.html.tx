@@ -18,6 +18,17 @@
     actual server or personal computer to connect to the network.  Select the
     type of node this is to get configure the machine to connect to the network.</p>
 
+
+%%  if ( $pending ) {
+    <div style="margin-top: 2em" class="alert alert-success" role="alert">
+        <p>Your configuration is being built, it should be available at the following
+        link in a few seconds.</p>
+
+        <a _target="blank" href="[% $c.url_for( '/download/' ~ $pending ) %]">Download Configuration</a>
+    </div>
+%%  }
+
+
 <div class="accordion" id="accordionExample">
   <div class="accordion-item">
     <h2 class="accordion-header" id="headingOne">
@@ -45,7 +56,14 @@
     </h2>
     <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
       <div class="accordion-body">
-        <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+        <p>To configure your macOS Laptop or Desktop, a bundle of files will be provided and instructions to set up the machine.
+        Click the button below to start building the bundle, once it is complete, the build button will be replaced with
+        a link to download and setup.</p>
+        <form method="post" action="[% $c.url_for( 'deploy_macos' ) %]">
+            <input type="hidden" name="node_id" value="[% $node.id %]" />
+            <input type="submit" class="btn btn-primary" value="Create Bundle" />
+        </form>
+
       </div>
     </div>
   </div>
