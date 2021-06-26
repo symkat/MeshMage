@@ -11,7 +11,9 @@ sub create ($c) {
 
     $c->redirect_to( 
         $c->url_for( 'view_node', node_id => $node->id )
-            ->query( pending => sprintf( "%s__macos_intel.tgz", $node->hostname ) )
+            ->query( 
+                pending => sprintf( "%s_macos_intel.tgz", $node->hostname ) 
+            )
     );
 }
 
