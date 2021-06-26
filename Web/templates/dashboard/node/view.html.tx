@@ -21,10 +21,29 @@
 
 %%  if ( $pending ) {
     <div style="margin-top: 2em" class="alert alert-success" role="alert">
-        <p>Your configuration is being built, it should be available at the following
-        link in a few seconds.</p>
+    
+        <h5 class="h5">macOS Intel - Complete Adoption</h5>
 
-        <a _target="blank" href="[% $c.url_for( '/download/' ~ $pending ) %]">Download Configuration</a>
+        <p>Your configuration bundle is being built and will be available in a few moments.</p>
+
+        <p>Open a terminal on the macOS machine, and use the following commands to complete the
+        adoption.</p>
+
+        <pre>
+            curl -O [% $c.url_for( '/download/' ~ $pending ).to_abs %]
+            tar -xzf [% $pending %]
+            cd nebula
+
+            # Right click on the nebula binary, and select "Open" to allow macOS to
+            # recognize this as an allowed file.
+            open -R nebula
+            
+            sudo ./install.sh
+        </pre>
+        
+        <p>Alternatively, you can <a _target="blank" href="[% $c.url_for( '/download/' ~ $pending ) %]">
+            download the tarball</a> and follow the steps in the included README.txt.</p>
+
     </div>
 %%  }
 

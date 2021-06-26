@@ -118,16 +118,21 @@ sub register ( $self, $app, $config ) {
         my $dir     = "$tempdir/nebula";
         make_path( $dir );
 
+        my $etc_path = $job->app->files_dir;
         my $net_path = $job->app->filepath_for( nebula => $net_id );
         my $neb_path = $job->app->nebula_for('darwin/amd64' ); # TODO - This can accept a platform, and
                                                                #        and then we can use one bundle task
                                                                #        for everything.
 
-        Mojo::File->new( "$net_path/$domain.crt" )->copy_to( $dir );
-        Mojo::File->new( "$net_path/$domain.key" )->copy_to( $dir );
-        Mojo::File->new( "$net_path/$domain.yml" )->copy_to( $dir );
-        Mojo::File->new( "$net_path/ca.crt"      )->copy_to( $dir );
-        Mojo::File->new( "$neb_path"             )->copy_to( $dir );
+        # Pack these files for the user.
+        Mojo::File->new( "$net_path/$domain.crt"      )->copy_to( $dir );
+        Mojo::File->new( "$net_path/$domain.key"      )->copy_to( $dir );
+        Mojo::File->new( "$net_path/$domain.yml"      )->copy_to( $dir );
+        Mojo::File->new( "$net_path/ca.crt"           )->copy_to( $dir );
+        Mojo::File->new( "$neb_path"                  )->copy_to( $dir );
+        Mojo::File->new( "$etc_path/install-macos.sh" )->copy_to( "$dir/install.sh" );
+        Mojo::File->new( "$etc_path/README-macos.txt" )->copy_to( "$dir/README.txt" );
+        Mojo::File->new( "$etc_path/Nebula.plist"     )->copy_to( $dir );
 
         # my $outfile = $job->app->filepath_for( nebula => $net_id, "${domain}_macos_intel.tgz" )VC
         my $outfile = $job->app->download_dir . "${domain}_macos_intel.tgz";

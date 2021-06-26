@@ -3,6 +3,7 @@ use Mojo::Base 'Mojolicious', -signatures;
 use MeshMage::DB;
 use Minion;
 use Mojo::File qw( curfile );
+use Mojo::Home;
 
 # This method will run once at server start
 sub startup ($self) {
@@ -27,7 +28,10 @@ sub startup ($self) {
 
     # The location we'll stick files for download.
     $self->helper( download_dir => sub {
-        sprintf( "%s/%s", $self->static->paths->[0], 'download/' ) 
+        return state $download = sprintf( "%s/%s", $self->static->paths->[0], 'download/' );
+    });
+    $self->helper( files_dir => sub {
+        return state $home = Mojo::Home->new->detect . "/files";
     });
 
     # Setup Minion Job Queue
