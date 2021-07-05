@@ -1,0 +1,19 @@
+- name: Configure Nebula Node
+  remote_user: root
+  vars:
+    ansible_ssh_common_args: -oControlMaster=auto -oControlPersist=60s -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no
+    domain: [% $node.hostname %]
+    meshnet_store: [% $app.filepath_for( 'nebula' ) %]
+    nebula_binary: [% $app.nebula_for( $platform ) %]
+    network_id: [% $node.network.id %]
+    node:
+      is_lighthouse: [% $node.is_lighthouse ? 'true' : 'false' %]
+    lighthouses:
+%% for $node.lighthouses -> $lighthouse {
+      - public_ip: [% $lighthouse.public_ip %]
+        nebula_ip: [% $lighthouse.nebula_ip %]
+%% }
+
+  hosts: all
+  roles:
+    - meshmage-node

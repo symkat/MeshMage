@@ -110,7 +110,7 @@ sub register ( $self, $app, $config ) {
         #
         # Make Nebula Configuration File For Packing
         Mojo::File->new( $job->app->filepath_for(nebula => $net_id, "$domain.yml"))
-            ->spurt( $job->app->make_nebula_config( $node ));
+            ->spurt( $job->app->templated_file( 'nebula_config.yml', node => $node ));
 
         # Make a temp dir, and inside it put a nebula dir, we'll 
         # end up taring up the nebula directory as the bundle.
@@ -156,29 +156,13 @@ sub register ( $self, $app, $config ) {
         # Create a nebula config file for this domain so that Ansible may use
         # the file.
         Mojo::File->new( $job->app->filepath_for( nebula => $node->network->id, $node->hostname . '.yml' ))
-            ->spurt( $job->app->make_nebula_config( $node ));
+            ->spurt( $job->app->templated_file( 'nebula_config.yml', node => $node ));
 
-        
-        print $playbook "- name: Configure Nebula Node\n";
-        print $playbook "  remote_user: root\n"; 
-        print $playbook "  vars:\n";
-        print $playbook "    ansible_ssh_common_args: -oControlMaster=auto -oControlPersist=60s -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no\n";
-        print $playbook "    domain: " . $node->hostname . "\n";
-        print $playbook "    meshnet_store: " . $job->app->filepath_for( 'nebula' ) . "\n";
-        print $playbook "    nebula_binary: " . $job->app->nebula_for( $platform ) . "\n";
-        print $playbook "    network_id: " . $node->network->id . "\n";
-        print $playbook "    node:\n";
-        print $playbook "      is_lighthouse: " . $node->is_lighthouse . "\n"; 
-        print $playbook "    lighthouses:\n";
-
-        foreach my $lighthouse ( @lighthouses ) {
-        print $playbook "      - public_ip: " . $lighthouse->public_ip . "\n";
-        print $playbook "        nebula_ip: " . $lighthouse->nebula_ip . "\n";
-        }
-        print $playbook "  hosts: all\n";
-        print $playbook "  roles:\n";
-        print $playbook "    - meshmage-node\n";
-
+        print $playbook $job->app->templated_file( 'ansible-playbook.yml',
+            node     => $node,
+            app      => $job->app,
+            platform => $platform
+        );
         $playbook->flush;
         close $playbook;
 

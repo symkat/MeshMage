@@ -2,6 +2,7 @@ package MeshMage::Web::Plugin::Helpers;
 use Mojo::Base 'Mojolicious::Plugin', -signatures;
 use File::Find;
 use File::Path qw( make_path );
+use Text::Xslate;
 
 sub register ( $self, $app, $config ) {
 
@@ -58,6 +59,21 @@ sub register ( $self, $app, $config ) {
     # Helper to memoize the platforms list.
     $app->helper( nebula_platforms => sub ($c) {
         return state $platforms = _get_platforms($c->config->{nebula}{store});
+    });
+
+
+    # Helpers to handle templates of files, for example nebula
+    # configuration files, ansible playlists and whatnot.
+    $app->helper( xslate => sub ($c) {
+        return state $xslate = Text::Xslate->new(
+            type   => 'text',
+            syntax => 'Metakolon',
+            path   => $c->files_dir . "/templates",
+        );
+    });
+
+    $app->helper( templated_file => sub ( $c, $file, %in ) {
+        return $c->xslate->render("$file.tx", \%in);
     });
 }
 

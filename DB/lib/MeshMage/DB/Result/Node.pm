@@ -165,6 +165,11 @@ __PACKAGE__->has_many(
 # Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-06-05 19:01:12
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:uAjzCmzboMJp3bWDLcA1dQ
 
+sub lighthouses {
+    my ( $self ) = @_;
+
+    return [ $self->network->search_related( 'nodes', { is_lighthouse => 1 } )->all ];
+}
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
 1;

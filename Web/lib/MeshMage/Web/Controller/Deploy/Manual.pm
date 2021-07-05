@@ -21,7 +21,7 @@ sub deploy ($c) {
         ca        => $ca,
         cert      => $cert,
         key       => $key,
-        conf      => $c->make_nebula_config( $node ),
+        conf      => $c->templated_file( 'nebula_config.yml', node => $node ),
         platforms => $c->nebula_platforms,
      );
 }
