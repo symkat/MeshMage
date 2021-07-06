@@ -100,10 +100,15 @@ sub register ( $self, $app, $config ) {
             $job->finish() unless shift;
         };
     });
-    
-    $app->minion->add_task( create_macos_intel_bundle => sub ( $job, $node_id ) {
+
+    # create_macos_bundle
+    #
+    # Given a node and a platform ( darwin/amd64 | darwin/arm64 ), create the install
+    # bundle for a macOS machine.
+    #
+    $app->minion->add_task( create_macos_bundle => sub ( $job, $node_id, $platform ) {
         my $node   = $job->app->db->resultset('Node')->find( $node_id );
-        my $domain = $node->hostname; 
+        my $domain = $node->hostname;
         my $net_id = $node->network->id;
 
         # TODO - This might need machine-specific configuration, let's abide that.
@@ -112,7 +117,7 @@ sub register ( $self, $app, $config ) {
         Mojo::File->new( $job->app->filepath_for(nebula => $net_id, "$domain.yml"))
             ->spurt( $job->app->templated_file( 'nebula_config.yml', node => $node ));
 
-        # Make a temp dir, and inside it put a nebula dir, we'll 
+        # Make a temp dir, and inside it put a nebula dir, we'll
         # end up taring up the nebula directory as the bundle.
         my $tempdir = File::Temp->newdir();
         my $dir     = "$tempdir/nebula";
@@ -120,9 +125,7 @@ sub register ( $self, $app, $config ) {
 
         my $etc_path = $job->app->files_dir;
         my $net_path = $job->app->filepath_for( nebula => $net_id );
-        my $neb_path = $job->app->nebula_for('darwin/amd64' ); # TODO - This can accept a platform, and
-                                                               #        and then we can use one bundle task
-                                                               #        for everything.
+        my $neb_path = $job->app->nebula_for( $platform );
 
         # Pack these files for the user.
         Mojo::File->new( "$net_path/$domain.crt"        )->copy_to( $dir                );
@@ -136,40 +139,10 @@ sub register ( $self, $app, $config ) {
         Mojo::File->new( "$etc_path/Nebula.plist"       )->copy_to( $dir                );
 
         # my $outfile = $job->app->filepath_for( nebula => $net_id, "${domain}_macos_intel.tgz" )VC
-        my $outfile = $job->app->download_dir . "${domain}_macos_intel.tgz";
+        my $outfile = $job->app->download_dir . "${domain}_macos.tgz";
 
         my $command = [qw( tar -C ), $tempdir, '-czf', $outfile, 'nebula' ];
         run3( $command );
-    });
-
-    $app->minion->add_task( deploy_node => sub ( $job, $node_id, $key_id, $deploy_ip, $platform ) {
-        my $node = $job->app->db->resultset('Node')->find( $node_id );
-        my @lighthouses = $node->network->search_related( 'nodes', { is_lighthouse => 1 } );
-
-        my $playbook = File::Temp->new(
-            TEMPLATE => 'playbook-XXXX', 
-            SUFFIX   => '.yml', 
-            UNLINK   => 0,
-            DIR      => $job->app->config->{ansible}{rundir},
-        );
-
-        # Create a nebula config file for this domain so that Ansible may use
-        # the file.
-        Mojo::File->new( $job->app->filepath_for( nebula => $node->network->id, $node->hostname . '.yml' ))
-            ->spurt( $job->app->templated_file( 'nebula_config.yml', node => $node ));
-
-        print $playbook $job->app->templated_file( 'ansible-playbook.yml',
-            node     => $node,
-            app      => $job->app,
-            platform => $platform
-        );
-        $playbook->flush;
-        close $playbook;
-
-        run3([ 'ansible-playbook', '-i', "$deploy_ip,", 
-            '--key-file', $job->app->filepath_for( sshkey => $key_id ),
-             $playbook->filename  
-        ]);
     });
     
     # create_node_cert
