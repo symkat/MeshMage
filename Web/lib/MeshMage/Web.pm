@@ -98,23 +98,6 @@ sub startup ($self) {
     $auth->get   ('/sshkeys/:id')        ->to('Sshkeys#show');
     $auth->post  ('/sshkeys')            ->to('Sshkeys#create');
 
-    # Download the nebula binary, we'll serve an error if they haven't asked for a platform that exists.
-    $r->get('/download')->to( cb => sub ($c) {
-        if ( ! $c->param('platform') or ! grep { $_ eq $c->param('platform') } @{$c->nebula_platforms} ) {
-            $c->reply->not_found;
-            return;
-        }
-
-        $c->res->headers->content_type('application/octet-stream');
-        $c->res->code(200);
-        if ( $c->param('platform') =~ m|^windows| ) {
-            $c->res->headers->content_disposition('attachment; filename=nebula.exe');
-        } else {
-            $c->res->headers->content_disposition('attachment; filename=nebula');
-        }
-        $c->reply->file( $c->nebula_for($c->param('platform') ) );
-    });
-
     # Normal route to controller
     $auth->get('/')->to(cb => sub ($c) {
         $c->redirect_to( $c->url_for('dashboard') ) 

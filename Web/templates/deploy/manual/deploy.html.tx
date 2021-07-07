@@ -38,7 +38,11 @@
         <select class="form-control" name="platform" id="platform" onchange="location = this.value">
             <option value="">Select Platform</option>
 %%          for $platforms -> $platform {
-            <option value="/download?platform=[% $platform %]">[% $platform %]</option>
+%%              if ( $platform == 'windows/amd64' ) {
+            <option value="[% $c.url_for( "/nebula/" ~ $platform ~ "/nebula.exe" ) %]">[% $platform %]</option>
+%%              } else {
+            <option value="[% $c.url_for( "/nebula/" ~ $platform ~ "/nebula" ) %]">[% $platform %]</option>
+%%              }
 %%          }
         </select>
     </div>
