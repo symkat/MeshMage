@@ -4,6 +4,7 @@ use MeshMage::DB;
 use Minion;
 use Mojo::File qw( curfile );
 use Mojo::Home;
+use Try::Tiny;
 
 # This method will run once at server start
 sub startup ($self) {
@@ -34,46 +35,68 @@ sub startup ($self) {
         return state $home = Mojo::Home->new->detect . "/files";
     });
 
-    # Setup Minion Job Queue
-    # NOTE: https://docs.mojolicious.org/Mojolicious/Plugin/Minion/Admin When auth exists,
-    # make sure that this plugin uses the same protection as other machine bits.
+    # Setup Plugins
     $self->plugin( Minion => { Pg => 'postgresql://minion:minion@localhost:5433/minion' } );
-    $self->plugin( 'Minion::Admin' );
     $self->plugin( 'MeshMage::Web::Plugin::MinionTasks' );
     $self->plugin( 'MeshMage::Web::Plugin::Helpers' );
-
+    
     # Router
     my $r = $self->routes;
 
-    # User Management
-    $r->get( '/login' ) ->render( );
+    # Handle user login & first account creation.
+    # Routes:
+    #   /login    GET view_login, POST post_login
+    #   /first    GET view_first, POST post_first
+    #   /logout   GET     logout, 
+    $self->plugin( 'MeshMage::Web::Plugin::UserManagement' => { } );
+
+    # Ensure that only authenticated users can access routes under
+    # $auth.
+    my $auth = $r->under( '/' => sub ($c) {
+
+        # Login via session cookie.
+        if ( $c->session('uid') ) {
+            my $person = $c->db->resultset('Person')->find( $c->session('uid') );
+
+            if ( $person && $person->is_enabled ) {
+                $c->stash->{person} = $person;
+                return 1;
+            }
+            $c->redirect_to( $c->url_for( 'view_login' ) );
+            return undef;
+        }
+
+        $c->redirect_to( $c->url_for( 'view_login' ) );
+        return undef;
+    });
+    
 
     # Adopt A Machine
-    $r->get   ('/adopt')             ->to('Adopt#get_adopt');
-    $r->post  ('/adopt')             ->to('Adopt#create_adopt');
+    $auth->get   ('/adopt')             ->to('Adopt#get_adopt');
+    $auth->post  ('/adopt')             ->to('Adopt#create_adopt');
 
     # Network Creation / Listing
-    $r->get   ('/network')           ->to('Network#index');
-    $r->get   ('/network/new')       ->to('Network#create');
-    $r->post  ('/network')           ->to('Network#create');
+    $auth->get   ('/network')           ->to('Network#index');
+    $auth->get   ('/network/new')       ->to('Network#create');
+    $auth->post  ('/network')           ->to('Network#create');
 
     # Connect Nodes
-    $r->get   ('/node')              ->to('Node#index');
-    $r->post  ('/node')              ->to('Node#create')->name( 'create_node' );
+    $auth->get   ('/node')              ->to('Node#index');
+    $auth->post  ('/node')              ->to('Node#create')->name( 'create_node' );
 
     # Deployment
-    $r->get   ('/deploy/automatic/:node_id' ) ->to('Deploy::Automatic#deploy')->name('deploy_automatic');
-    $r->post  ('/deploy/automatic' )          ->to('Deploy::Automatic#create');
+    $auth->get   ('/deploy/automatic/:node_id' ) ->to('Deploy::Automatic#deploy')->name('deploy_automatic');
+    $auth->post  ('/deploy/automatic' )          ->to('Deploy::Automatic#create');
 
-    $r->get   ('/deploy/manual/:node_id' ) ->to('Deploy::Manual#deploy')->name('deploy_manual');
-    $r->post  ('/deploy/manual' )          ->to('Deploy::Manual#create');
+    $auth->get   ('/deploy/manual/:node_id' ) ->to('Deploy::Manual#deploy')->name('deploy_manual');
+    $auth->post  ('/deploy/manual' )          ->to('Deploy::Manual#create');
     
-    $r->post  ('/deploy/macos' )           ->to('Deploy::MacOS#create')->name('deploy_macos');
+    $auth->post  ('/deploy/macos' )           ->to('Deploy::MacOS#create')->name('deploy_macos');
 
     # Manage SSH Keys
-    $r->get   ('/sshkeys')            ->to('Sshkeys#index');
-    $r->get   ('/sshkeys/:id')        ->to('Sshkeys#show');
-    $r->post  ('/sshkeys')            ->to('Sshkeys#create');
+    $auth->get   ('/sshkeys')            ->to('Sshkeys#index');
+    $auth->get   ('/sshkeys/:id')        ->to('Sshkeys#show');
+    $auth->post  ('/sshkeys')            ->to('Sshkeys#create');
 
     # Download the nebula binary, we'll serve an error if they haven't asked for a platform that exists.
     $r->get('/download')->to( cb => sub ($c) {
@@ -93,14 +116,19 @@ sub startup ($self) {
     });
 
     # Normal route to controller
-    $r->get('/')                               ->to('Dashboard#index');
-    $r->get('/dashboard')                      ->to('Dashboard#index')        ->name( 'dashboard' );
-    $r->get('/dashboard/nodes')                ->to('Dashboard::Node#list')   ->name( 'list_nodes' );
-    $r->get('/dashboard/node/:node_id')        ->to('Dashboard::Node#view')   ->name( 'view_node' );
-    $r->get('/dashboard/networks')             ->to('Dashboard::Network#list')->name( 'list_networks' );
-    $r->get('/dashboard/network/:network_id')  ->to('Dashboard::Network#view')->name( 'view_network' );
-    $r->get('/dashboard/sshkeys')              ->to('Dashboard::Sshkeys#list')->name( 'list_sshkeys' );
-    $r->get('/dashboard/sshkeys/:sshkey_id')   ->to('Dashboard::Sshkeys#view')->name( 'view_sshkey' );
+    $auth->get('/')->to(cb => sub ($c) {
+        $c->redirect_to( $c->url_for('dashboard') ) 
+    });
+    $auth->get('/dashboard')                    ->to('Dashboard#index')        ->name( 'dashboard' );
+    $auth->get('/dashboard/nodes')              ->to('Dashboard::Node#list')   ->name( 'list_nodes' );
+    $auth->get('/dashboard/node/:node_id')      ->to('Dashboard::Node#view')   ->name( 'view_node' );
+    $auth->get('/dashboard/networks')           ->to('Dashboard::Network#list')->name( 'list_networks' );
+    $auth->get('/dashboard/network/:network_id')->to('Dashboard::Network#view')->name( 'view_network' );
+    $auth->get('/dashboard/sshkeys')            ->to('Dashboard::Sshkeys#list')->name( 'list_sshkeys' );
+    $auth->get('/dashboard/sshkeys/:sshkey_id') ->to('Dashboard::Sshkeys#view')->name( 'view_sshkey' );
+
+    # 
+    $self->plugin( 'Minion::Admin' => { route => $auth->under( '/minion' ) } );
 }
 
 1;
