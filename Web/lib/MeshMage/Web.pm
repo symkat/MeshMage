@@ -22,6 +22,9 @@ sub startup ($self) {
         }
     });
 
+    # Set the cookie expires to 30 days.
+    $self->sessions->default_expiration(2592000);
+
     my $db = MeshMage::DB->connect(
         'dbi:Pg:host=localhost;dbname=meshmage', 'meshmage', 'meshmage'
     );
@@ -84,14 +87,11 @@ sub startup ($self) {
     $auth->get   ('/node')              ->to('Node#index');
     $auth->post  ('/node')              ->to('Node#create')->name( 'create_node' );
 
-    # Deployment
-    $auth->get   ('/deploy/automatic/:node_id' ) ->to('Deploy::Automatic#deploy')->name('deploy_automatic');
-    $auth->post  ('/deploy/automatic' )          ->to('Deploy::Automatic#create');
-
-    $auth->get   ('/deploy/manual/:node_id' ) ->to('Deploy::Manual#deploy')->name('deploy_manual');
-    $auth->post  ('/deploy/manual' )          ->to('Deploy::Manual#create');
-    
-    $auth->post  ('/deploy/macos' )           ->to('Deploy::MacOS#create')->name('deploy_macos');
+    # Deployment Methods
+    $auth->get   ('/deploy/manual/:node_id')   ->to('Deploy#manual')          ->name('deploy_manual');
+    $auth->post  ('/deploy/macos')             ->to('Deploy#create_macos')    ->name('create_macos');
+    $auth->get   ('/deploy/automatic/:node_id')->to('Deploy#automatic')       ->name('deploy_automatic');
+    $auth->post  ('/deploy/automatic')         ->to('Deploy#create_automatic')->name('create_automatic');
 
     # Manage SSH Keys
     $auth->get   ('/sshkeys')            ->to('Sshkeys#index');
