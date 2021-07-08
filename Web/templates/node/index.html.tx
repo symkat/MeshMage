@@ -32,7 +32,7 @@
             <select class="form-control" name="network_id" id="network_id">
                 <option value="">Choose Network</option>
 %%          for $networks -> $network {
-%%              my $is_selected = ( $network.id == $form_network_id ? "selected" : "" );
+%%              my $is_selected = ( $network.id == $c.param('network_id') ? "selected" : "" );
                 <option [% $is_selected %] value="[% $network.id %]">[% $network.name %] ([% $network.address %])</option>
 %%          }
             </select>
