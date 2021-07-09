@@ -73,11 +73,6 @@ sub startup ($self) {
         return undef;
     });
     
-
-    # Adopt A Machine
-    $auth->get   ('/adopt')             ->to('Adopt#get_adopt');
-    $auth->post  ('/adopt')             ->to('Adopt#create_adopt');
-
     # Network Creation / Listing
     $auth->get   ('/network')           ->to('Network#index');
     $auth->get   ('/network/new')       ->to('Network#create');
