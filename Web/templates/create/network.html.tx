@@ -4,7 +4,7 @@
 
 %% override panel -> {
     <h2 style="margin-top: 1.5em" class="h2">New Network</h2>
-    <form method="POST" action="/network">
+    <form method="POST" action="[% $c.url_for( 'create_network' ) %]">
        %% include '_base/form/input.tx' { type => 'text', name => 'network_name',
        %%   title => 'Network Name',
        %%   help  => 'This will be the name of the network (e.g. "Mesh Network")',

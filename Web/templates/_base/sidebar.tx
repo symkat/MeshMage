@@ -3,7 +3,7 @@
       <div class="position-sticky pt-3">
         <ul class="nav flex-column">
           <li class="nav-item">
-            <a class="nav-link [% $sb_active == "dashboard" ? "active" : "" %]"  aria-current="page" href="/">
+            <a class="nav-link [% $sb_active == "dashboard" ? "active" : "" %]"  aria-current="page" href="[% $c.url_for( 'dashboard' ) %]">
               <span data-feather="home"></span>
               Dashboard
             </a>
@@ -21,7 +21,7 @@
         </h6>
         <ul class="nav flex-column mb-2">
           <li class="nav-item">
-            <a class="nav-link [% $sb_active == "network" ? "active" : "" %]" href="/network">
+            <a class="nav-link [% $sb_active == "network" ? "active" : "" %]" href="[% $c.url_for( 'new_network' ) %]">
               <span data-feather="cpu"></span>
               Create Network
             </a>
@@ -29,35 +29,18 @@
 
 
           <li class="nav-item">
-            <a class="nav-link [% $sb_active == "node" ? "active" : "" %]" href="/node">
+            <a class="nav-link [% $sb_active == "node" ? "active" : "" %]" href="[% $c.url_for( 'new_node' ) %]">
               <span data-feather="share-2"></span>
               Create Node
             </a>
           </li>
         <ul class="nav flex-column mb-2">
           <li class="nav-item">
-            <a class="nav-link [% $sb_active == "sshkeys" ? "active" : "" %]" href="/sshkeys">
+            <a class="nav-link [% $sb_active == "sshkeys" ? "active" : "" %]" href="[% $c.url_for( 'new_sshkey' ) %]">
               <span data-feather="link-2"></span>
                 Create SSH Key
             </a>
           </li>
         </ul>
-
-          <!--
-
-          <li class="nav-item">
-            <a class="nav-link [% $sb_active == "lighthouse" ? "active" : "" %]" href="#">
-              <span data-feather="sun"></span>
-              Add a Lighthouse
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link [% $sb_active == "adopt" ? "active" : "" %]" href="/adopt">
-              <span data-feather="share-2"></span>
-              Adopt A Machine
-            </a>
-          </li>
-        </ul>
-        -->
       </div>
     </nav>

@@ -72,41 +72,36 @@ sub startup ($self) {
         $c->redirect_to( $c->url_for( 'view_login' ) );
         return undef;
     });
+     
+    $self->plugin( 'Minion::Admin' => { route => $auth->under( '/minion' ) } );
     
-    # Network Creation / Listing
-    $auth->get   ('/network')           ->to('Network#index');
-    $auth->get   ('/network/new')       ->to('Network#create');
-    $auth->post  ('/network')           ->to('Network#create');
-
-    # Connect Nodes
-    $auth->get   ('/node')              ->to('Node#index');
-    $auth->post  ('/node')              ->to('Node#create')->name( 'create_node' );
-
-    # Deployment Methods
-    $auth->get   ('/deploy/manual/:node_id')   ->to('Deploy#manual')          ->name('deploy_manual');
-    $auth->post  ('/deploy/macos')             ->to('Deploy#create_macos')    ->name('create_macos');
-    $auth->get   ('/deploy/automatic/:node_id')->to('Deploy#automatic')       ->name('deploy_automatic');
-    $auth->post  ('/deploy/automatic')         ->to('Deploy#create_automatic')->name('create_automatic');
-
-    # Manage SSH Keys
-    $auth->get   ('/sshkeys')            ->to('Sshkeys#index');
-    $auth->get   ('/sshkeys/:id')        ->to('Sshkeys#show');
-    $auth->post  ('/sshkeys')            ->to('Sshkeys#create');
-
-    # Normal route to controller
+    # Send requests for / to the dashboard.
     $auth->get('/')->to(cb => sub ($c) {
         $c->redirect_to( $c->url_for('dashboard') ) 
     });
-    $auth->get('/dashboard')                    ->to('Dashboard#index')        ->name( 'dashboard' );
-    $auth->get('/dashboard/nodes')              ->to('Dashboard::Node#list')   ->name( 'list_nodes' );
-    $auth->get('/dashboard/node/:node_id')      ->to('Dashboard::Node#view')   ->name( 'view_node' );
-    $auth->get('/dashboard/networks')           ->to('Dashboard::Network#list')->name( 'list_networks' );
-    $auth->get('/dashboard/network/:network_id')->to('Dashboard::Network#view')->name( 'view_network' );
-    $auth->get('/dashboard/sshkeys')            ->to('Dashboard::Sshkeys#list')->name( 'list_sshkeys' );
-    $auth->get('/dashboard/sshkeys/:sshkey_id') ->to('Dashboard::Sshkeys#view')->name( 'view_sshkey' );
 
-    # 
-    $self->plugin( 'Minion::Admin' => { route => $auth->under( '/minion' ) } );
+    # Controllers to create new things.
+    $auth->get ('/create/network')->to('Create#network'       )->name('new_network'   );
+    $auth->post('/create/network')->to('Create#create_network')->name('create_network');
+    $auth->get ('/create/node'   )->to('Create#node'          )->name('new_node'      );
+    $auth->post('/create/node'   )->to('Create#create_node'   )->name('create_node'   );
+    $auth->get ('/create/sshkey' )->to('Create#sshkey'        )->name('new_sshkey'    );
+    $auth->post('/create/sshkey' )->to('Create#create_sshkey' )->name('create_sshkey' );
+
+    # Controllers to handle deploying/adopting nodes.
+    $auth->get ('/deploy/manual/:node_id'   )->to('Deploy#manual'          )->name('deploy_manual'   );
+    $auth->post('/deploy/macos'             )->to('Deploy#create_macos'    )->name('create_macos'    );
+    $auth->get ('/deploy/automatic/:node_id')->to('Deploy#automatic'       )->name('deploy_automatic');
+    $auth->post('/deploy/automatic'         )->to('Deploy#create_automatic')->name('create_automatic');
+
+    # Controllers for the dashboard to view the networks.
+    $auth->get('/dashboard'                    )->to('Dashboard#index'        )->name('dashboard'    );
+    $auth->get('/dashboard/nodes'              )->to('Dashboard::Node#list'   )->name('list_nodes'   );
+    $auth->get('/dashboard/node/:node_id'      )->to('Dashboard::Node#view'   )->name('view_node'    );
+    $auth->get('/dashboard/networks'           )->to('Dashboard::Network#list')->name('list_networks');
+    $auth->get('/dashboard/network/:network_id')->to('Dashboard::Network#view')->name('view_network' );
+    $auth->get('/dashboard/sshkeys'            )->to('Dashboard::Sshkeys#list')->name('list_sshkeys' );
+    $auth->get('/dashboard/sshkeys/:sshkey_id' )->to('Dashboard::Sshkeys#view')->name('view_sshkey'  );
 }
 
 1;

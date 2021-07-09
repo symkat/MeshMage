@@ -1,15 +1,40 @@
-package MeshMage::Web::Controller::Node;
+package MeshMage::Web::Controller::Create;
 use Mojo::Base 'Mojolicious::Controller', -signatures;
 use Net::Subnet;
 
-sub index ($c) {
+sub network ($c) {
+    my @networks = $c->db->resultset('Network')->all();
+
+    $c->stash( networks => \@networks );
+}
+
+sub create_network ($c) {
+
+    my $name = $c->param('network_name');
+    my $tld  = $c->param('network_tld');
+    my $cidr = $c->param('network_cidr');
+
+    my $network = $c->db->resultset('Network')->create({
+        name    => $name,
+        tld     => $tld,
+        address => $cidr,
+    });
+
+    $c->minion->enqueue( 'create_network_cert' => [ $network->id ],
+        { notes => { $network->tld => 1 } }
+    );
+    
+    $c->redirect_to( $c->url_for( 'view_network', network_id => $network->id )->query( new => 1 ) );
+}
+
+sub node ($c) {
     my @nodes    = $c->db->resultset('Node')->all();
     my @networks = $c->db->resultset('Network')->all();
 
     $c->stash( nodes => \@nodes, networks => \@networks );
 }
 
-sub create ($c) {
+sub create_node ($c) {
     my $network_id     = $c->param('network_id');
     my $is_lighthouse  = $c->param('is_lighthouse');
     my $hostname       = $c->param('hostname');
@@ -99,6 +124,23 @@ sub create ($c) {
     );
 
     $c->redirect_to( $c->url_for( 'view_node', node_id => $node->id )->query( is_new => 1 ) );
+}
+
+sub sshkey ($c) {
+    my @sshkeys = $c->db->resultset('Sshkey')->all();
+
+    $c->stash( sshkeys => \@sshkeys );
+}
+
+sub create_sshkey ($c) {
+
+    if ( $c->param('key_method') eq 'generate' ) {
+        $c->minion->enqueue( 'generate_sshkey' => [ $c->param('key_desc') ]);
+        $c->redirect_to( $c->url_for( 'dashboard' )->query( notice => 'ssh-generate' ) );
+    } else {
+        $c->minion->enqueue( 'import_sshkey' => [ $c->param('key_desc'), $c->param('private_key'), $c->param('public_key') ]);
+        $c->redirect_to( $c->url_for( 'dashboard' )->query( notice => 'ssh-import' ) );
+    }
 }
 
 1;
