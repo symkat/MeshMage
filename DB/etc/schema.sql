@@ -28,6 +28,13 @@ CREATE TABLE auth_password (
     created_at                  timestamptz     not null default current_timestamp
 );
 
+CREATE TABLE auth_token (
+    id                          serial          PRIMARY KEY,
+    person_id                   int             not null unique references person(id),
+    token                       text            not null,
+    created_at                  timestamptz     not null default current_timestamp
+);
+
 CREATE TABLE network (
     id                          serial          PRIMARY KEY,
     name                        text            not null,

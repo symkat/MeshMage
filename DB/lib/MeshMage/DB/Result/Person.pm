@@ -133,6 +133,21 @@ __PACKAGE__->might_have(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 auth_token
+
+Type: might_have
+
+Related object: L<MeshMage::DB::Result::AuthToken>
+
+=cut
+
+__PACKAGE__->might_have(
+  "auth_token",
+  "MeshMage::DB::Result::AuthToken",
+  { "foreign.person_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 person_settings
 
 Type: has_many
@@ -149,8 +164,9 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-05-31 02:44:22
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:CVMDTOPT2UpiKpMEwMo5pg
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-07-11 18:07:01
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:3ByecdkS9MdtdGywmEse+g
+use Data::GUID;
 
 sub setting {
     my ( $self, $setting, $value ) = @_;
@@ -190,6 +206,18 @@ sub get_settings {
     }
 
     return $return;
+}
+
+sub create_auth_token {
+    my ( $self ) = @_;
+
+    my $token = Data::GUID->guid_string;
+
+    $self->create_related( 'auth_token', {
+        token => $token,
+    });
+
+    return $token;
 }
 
 1;

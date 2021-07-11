@@ -5,6 +5,7 @@ use Minion;
 use Mojo::File qw( curfile );
 use Mojo::Home;
 use Try::Tiny;
+use DateTime;
 
 # This method will run once at server start
 sub startup ($self) {
@@ -52,13 +53,22 @@ sub startup ($self) {
     # user.
     my $auth = $r->under( '/' => sub ($c) {
 
-        # Hax: by-pass authentication with an X-Auth header.
-        #
-        # TODO: Add a bit to the DB so we can make values for
-        # an X-Auth when users are given the chance to download
-        # things with keys and such.
+        # Login through an X-Auth tokens (i.e. for curl commands)
         if ( $c->req->headers->header('X-Auth') ) {
-            return 1;
+            my $token = $c->req->headers->header('X-Auth');
+
+            my $lower_time = DateTime->now;
+               $lower_time->subtract( minutes => 15 );
+
+            my $record = $c->db->resultset('AuthToken')->search({
+                token      => $token,
+                created_at => { '>=', $lower_time },
+            })->first;
+
+            if ( $record ) {
+                $c->stash->{person} = $record->person_id;
+                return 1;
+            }
         }
 
         # Login via session cookie.

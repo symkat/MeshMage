@@ -30,7 +30,7 @@
         adoption.</p>
 
         <pre>
-            curl -O [% $c.url_for( '/download/' ~ $pending ).to_abs %]
+            curl -O -H 'X-Auth: [% $c.stash.person.create_auth_token %]' [% $c.url_for( '/download/' ~ $pending ).to_abs %]
             tar -xzf [% $pending %]
             cd nebula
 
@@ -79,14 +79,14 @@
         <p>Select the kind of processor your computer has and instructions will be provided.</p>
         <div class="row">
             <div class="col">
-                <form method="post" action="[% $c.url_for( 'deploy_macos' ) %]">
+                <form method="post" action="[% $c.url_for( 'create_macos' ) %]">
                     <input type="hidden" name="node_id" value="[% $node.id %]" />
                     <input type="hidden" name="platform" value="darwin/amd64" />
                     <input type="submit" class="btn btn-primary" value="macOS Intel Processor" />
                 </form>
             </div>
             <div class="col">
-                <form method="post" action="[% $c.url_for( 'deploy_macos' ) %]">
+                <form method="post" action="[% $c.url_for( 'create_macos' ) %]">
                     <input type="hidden" name="node_id" value="[% $node.id %]" />
                     <input type="hidden" name="platform" value="darwin/arm64" />
                     <input type="submit" class="btn btn-primary" value="macOS M1 Processor" />
