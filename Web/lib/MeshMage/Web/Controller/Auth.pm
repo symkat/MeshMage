@@ -55,12 +55,18 @@ sub create_login ($c) {
     my $person = $c->db->resultset('Person')->find( { email => $email } )
         or push @{$c->stash->{errors}}, "Invalid email address or password.";
     
-    return if $c->stash->{errors};
+    if ( $c->stash->{errors} ) {
+        $c->render( template => 'auth/login' );
+        return 0;
+    }
 
     $person->auth_password->check_password( $password )
         or push @{$c->stash->{errors}}, "Invalid email address or password.";
     
-    return if $c->stash->{errors}; 
+    if ( $c->stash->{errors} ) {
+        $c->render( template => 'auth/login' );
+        return 0;
+    }
 
     $c->session->{uid} = $person->id;
     
@@ -70,7 +76,6 @@ sub create_login ($c) {
 sub logout ($c) {
     undef $c->session->{uid};
     $c->redirect_to( $c->url_for( 'auth_login' ) );
-
 }
 
 1;

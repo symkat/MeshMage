@@ -173,4 +173,39 @@ sub create_user ($c) {
     $c->redirect_to( $c->url_for( 'list_users' ) );
 }
 
+sub password ($c) {
+
+}
+
+sub create_password ($c) {
+    my $old_password     = $c->stash->{old_password}     = $c->param('old_password');
+    my $password         = $c->stash->{password}         = $c->param('password');
+    my $password_confirm = $c->stash->{password_confirm} = $c->param('password_confirm');
+
+    push @{$c->stash->{errors}}, "Current password required."
+        unless $old_password;
+
+    push @{$c->stash->{errors}}, "New password required."
+        unless $password;
+
+    push @{$c->stash->{errors}}, "Confirm new password required."
+        unless $password_confirm;
+
+    push @{$c->stash->{errors}}, "Password and confirmation must match."
+        unless $password eq $password_confirm;
+
+    push @{$c->stash->{errors}}, "Your current password was incorrect."
+        unless $c->stash->{person}->auth_password->check_password( $old_password );
+
+    if ( $c->stash->{errors} ) {
+        $c->render( template => 'create/password');
+        return 0;
+    }
+
+    $c->stash->{person}->auth_password->update_password( $password );
+
+    $c->redirect_to( $c->url_for( 'dashboard' )->query( notice => 'password' ) );
+}
+
+
 1;

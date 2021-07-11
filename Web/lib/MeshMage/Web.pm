@@ -110,14 +110,16 @@ sub startup ($self) {
     });
 
     # Controllers to create new things.
-    $auth->get ('/create/network')->to('Create#network'       )->name('new_network'   );
-    $auth->post('/create/network')->to('Create#create_network')->name('create_network');
-    $auth->get ('/create/node'   )->to('Create#node'          )->name('new_node'      );
-    $auth->post('/create/node'   )->to('Create#create_node'   )->name('create_node'   );
-    $auth->get ('/create/sshkey' )->to('Create#sshkey'        )->name('new_sshkey'    );
-    $auth->post('/create/sshkey' )->to('Create#create_sshkey' )->name('create_sshkey' );
-    $auth->get ('/create/user'   )->to('Create#user'          )->name('new_user'      );
-    $auth->post('/create/user'   )->to('Create#create_user'   )->name('create_user'   );
+    $auth->get ('/create/network' )->to('Create#network'        )->name('new_network'    );
+    $auth->post('/create/network' )->to('Create#create_network' )->name('create_network' );
+    $auth->get ('/create/node'    )->to('Create#node'           )->name('new_node'       );
+    $auth->post('/create/node'    )->to('Create#create_node'    )->name('create_node'    );
+    $auth->get ('/create/sshkey'  )->to('Create#sshkey'         )->name('new_sshkey'     );
+    $auth->post('/create/sshkey'  )->to('Create#create_sshkey'  )->name('create_sshkey'  );
+    $auth->get ('/create/user'    )->to('Create#user'           )->name('new_user'       );
+    $auth->post('/create/user'    )->to('Create#create_user'    )->name('create_user'    );
+    $auth->get ('/create/password')->to('Create#password'       )->name('new_password'   );
+    $auth->post('/create/password')->to('Create#create_password')->name('create_password');
 
     # Controllers to handle deploying/adopting nodes.
     $auth->get ('/deploy/manual/:node_id'   )->to('Deploy#manual'          )->name('deploy_manual'   );

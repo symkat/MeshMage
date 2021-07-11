@@ -18,6 +18,9 @@
 %%      if ( $notice == 'network-created' ) {
             Your network has been created, it should display below when its certs are generated.
 %%      }
+%%      if ( $notice == 'password' ) {
+            Your password has been updated.
+%%      }
     </div>
 %%  }
 
