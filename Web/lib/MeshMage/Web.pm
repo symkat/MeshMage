@@ -43,18 +43,11 @@ sub startup ($self) {
     $self->plugin( 'MeshMage::Web::Plugin::MinionTasks' );
     $self->plugin( 'MeshMage::Web::Plugin::Helpers' );
     
-    # Router
+    # Standard router.
     my $r = $self->routes;
-
-    # Handle user login & first account creation.
-    # Routes:
-    #   /login    GET view_login, POST post_login
-    #   /first    GET view_first, POST post_first
-    #   /logout   GET     logout, 
-    $self->plugin( 'MeshMage::Web::Plugin::UserManagement' => { } );
-
-    # Ensure that only authenticated users can access routes under
-    # $auth.
+    
+    # Create a router chain that ensures the request is from an authenticated
+    # user.
     my $auth = $r->under( '/' => sub ($c) {
 
         # Login via session cookie.
@@ -65,14 +58,22 @@ sub startup ($self) {
                 $c->stash->{person} = $person;
                 return 1;
             }
-            $c->redirect_to( $c->url_for( 'view_login' ) );
+            $c->redirect_to( $c->url_for( 'auth_login' ) );
             return undef;
         }
 
-        $c->redirect_to( $c->url_for( 'view_login' ) );
+        $c->redirect_to( $c->url_for( 'auth_login' ) );
         return undef;
     });
-     
+
+    # Controllers to handle initial user creation, login and logout.
+    $r->get ('/auth/init'  )->to('Auth#init'        )->name('auth_init'        );
+    $r->post('/auth/init'  )->to('Auth#create_init' )->name('create_auth_init' );
+    $r->get ('/auth/login' )->to('Auth#login'       )->name('auth_login'       );
+    $r->post('/auth/login' )->to('Auth#create_login')->name('create_auth_login');
+    $r->get ('/auth/logout')->to('Auth#logout'      )->name('logout'       );
+
+    # The /minion stuff is handled here because we needed to place it under $auth.
     $self->plugin( 'Minion::Admin' => { route => $auth->under( '/minion' ) } );
     
     # Send requests for / to the dashboard.

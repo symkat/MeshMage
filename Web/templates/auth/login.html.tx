@@ -3,7 +3,7 @@
 %%  }
 
 %% override panel -> {
-    <h2 style="margin-top: 1.5em" class="h2">Create First Account</h2>
+    <h2 style="margin-top: 1.5em" class="h2">Login</h2>
 
 %% if ( $errors.size() ) { 
     <div style="margin-top: 2em" class="alert alert-danger" role="alert">
@@ -16,13 +16,7 @@
     </div>
 %%  } 
 
-    <form style="margin-top: 1.5em" method="POST" action="/first">
-
-        %% include '_base/form/input.tx' { type => 'text', name => 'name',
-        %%   title => 'Your name',
-        %%   help  => '',
-        %%   value => $form_name
-        %% };
+    <form style="margin-top: 1.5em" method="POST" action="[% $c.url_for( 'auth_login' ) %]">
 
         %% include '_base/form/input.tx' { type => 'email', name => 'email',
         %%   title => 'Email Address',
@@ -36,13 +30,7 @@
         %%   value => $form_password
         %% };
         
-        %% include '_base/form/input.tx' { type => 'password', name => 'password_confirm',
-        %%   title => 'Confirm Password',
-        %%   help  => '',
-        %%   value => $form_password_confirm
-        %% };
-        
 
-        <button type="submit" class="btn btn-primary float-end">Create Account</button>
+        <button type="submit" class="btn btn-primary float-end">Login</button>
     </form>
 %% }
