@@ -1,0 +1,49 @@
+%%  cascade _base::layout { title => "Create User",
+%%      sb_active => 'users'
+%%  }
+
+%% override panel -> {
+    
+    <h2 style="margin-top: 1.5em" class="h2">Add New User</h2>
+    <p>New users will have unrestricted access to MeshMage.</p>
+
+%% if ( $errors.size() ) { 
+    <div style="margin-top: 2em" class="alert alert-danger" role="alert">
+        There were errors with your request that could not be resolved:
+        <ul>
+%%      for $errors -> $error {
+            <li>[% $error %]</li>
+%%  } 
+        </ul>
+    </div>
+%%  } 
+
+
+    <form style="margin-top: 1.5em" method="POST" action="[% $c.url_for( 'create_user' ) %]">
+        %% include '_base/form/input.tx' { type => 'text', name => 'name',
+        %%   title => 'Your name',
+        %%   help  => '',
+        %%   value => $form_name
+        %% };
+
+        %% include '_base/form/input.tx' { type => 'email', name => 'email',
+        %%   title => 'Email Address',
+        %%   help  => '',
+        %%   value => $form_email
+        %% };
+        
+        %% include '_base/form/input.tx' { type => 'password', name => 'password',
+        %%   title => 'Password',
+        %%   help  => '',
+        %%   value => $form_password
+        %% };
+        
+        %% include '_base/form/input.tx' { type => 'password', name => 'password_confirm',
+        %%   title => 'Confirm Password',
+        %%   help  => '',
+        %%   value => $form_password_confirm
+        %% };
+        
+        <button type="submit" class="btn btn-primary float-end">Create Account</button>
+    </form>
+%% }

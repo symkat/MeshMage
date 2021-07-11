@@ -9,7 +9,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link [% $sb_active == "users" ? "active" : "" %]" href="#">
+            <a class="nav-link [% $sb_active == "users" ? "active" : "" %]" href="[% $c.url_for('list_users') %]">
               <span data-feather="users"></span>
               Users
             </a>

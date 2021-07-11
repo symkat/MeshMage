@@ -1,6 +1,7 @@
 package MeshMage::Web::Controller::Create;
 use Mojo::Base 'Mojolicious::Controller', -signatures;
 use Net::Subnet;
+use Try::Tiny;
 
 sub network ($c) {
     my @networks = $c->db->resultset('Network')->all();
@@ -141,6 +142,35 @@ sub create_sshkey ($c) {
         $c->minion->enqueue( 'import_sshkey' => [ $c->param('key_desc'), $c->param('private_key'), $c->param('public_key') ]);
         $c->redirect_to( $c->url_for( 'dashboard' )->query( notice => 'ssh-import' ) );
     }
+}
+
+sub user ($c) {
+
+}
+
+sub create_user ($c) {
+
+    my $person = try {
+        $c->db->storage->schema->txn_do( sub {
+            my $person = $c->db->resultset('Person')->create({
+                email => $c->param('email'),
+                name  => $c->param('name'),
+            });
+            $person->new_related('auth_password', {})->set_password($c->param('password'));
+            return $person;
+        });
+    } catch {
+        push @{$c->stash->{errors}}, "Account could not be created: $_";
+    };
+
+    if ( $c->stash->{errors} ) {
+        $c->render( template => 'create/user');
+        return 0;
+    }
+
+    $c->session->{uid} = $person->id;
+
+    $c->redirect_to( $c->url_for( 'list_users' ) );
 }
 
 1;

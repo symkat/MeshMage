@@ -1,0 +1,48 @@
+%%  cascade _base::layout { title => "Dashboard",
+%%      sb_active => 'users'
+%%  }
+
+%% override panel -> {
+
+%%  if ( $notice ) {
+    <div style="margin-top: 2em" class="alert alert-success" role="alert">
+%%      if ( $notice == 'ssh-generate' ) {
+            Your ssh key is being generated, it should display below when complete.
+%%      }
+%%      if ( $notice == 'ssh-import' ) {
+            Your ssh key is being imported, it should display below when complete.
+%%      }
+%%      if ( $notice == 'node-created' ) {
+            Your node has been created, it should display below when its certs are generated.
+%%      }
+%%      if ( $notice == 'network-created' ) {
+            Your network has been created, it should display below when its certs are generated.
+%%      }
+    </div>
+%%  }
+
+    <h2 style="margin-top: 2em" class="h2">Users
+        <a href="[% $c.url_for( 'new_user' ) %]" title="Add User"><span data-feather="plus-circle"></span></a>
+    </h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Enabled</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+%%          for $users -> $user {
+            <tr>
+                <td>[% $user.name %]</td>
+                <td>[% $user.email %]</td>
+                <td>[% $user.is_enabled ? 'True' : 'False' %]</td>
+                <td>[% $user.created_at.mdy %]</td>
+            </tr>
+%%          }
+        </tbody>
+    </table>
+%% }

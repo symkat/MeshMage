@@ -15,4 +15,10 @@ sub index ($c) {
     );
 }
 
+sub users ($c) {
+    $c->stash(
+        users => [ $c->db->resultset('Person')->all ],
+    );
+}
+
 1;

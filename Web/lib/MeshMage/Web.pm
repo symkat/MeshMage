@@ -116,6 +116,8 @@ sub startup ($self) {
     $auth->post('/create/node'   )->to('Create#create_node'   )->name('create_node'   );
     $auth->get ('/create/sshkey' )->to('Create#sshkey'        )->name('new_sshkey'    );
     $auth->post('/create/sshkey' )->to('Create#create_sshkey' )->name('create_sshkey' );
+    $auth->get ('/create/user'   )->to('Create#user'          )->name('new_user'      );
+    $auth->post('/create/user'   )->to('Create#create_user'   )->name('create_user'   );
 
     # Controllers to handle deploying/adopting nodes.
     $auth->get ('/deploy/manual/:node_id'   )->to('Deploy#manual'          )->name('deploy_manual'   );
@@ -125,6 +127,7 @@ sub startup ($self) {
 
     # Controllers for the dashboard to view the networks.
     $auth->get('/dashboard'                    )->to('Dashboard#index'        )->name('dashboard'    );
+    $auth->get('/dashboard/users'              )->to('Dashboard#users'        )->name('list_users'   );
     $auth->get('/dashboard/nodes'              )->to('Dashboard::Node#list'   )->name('list_nodes'   );
     $auth->get('/dashboard/node/:node_id'      )->to('Dashboard::Node#view'   )->name('view_node'    );
     $auth->get('/dashboard/networks'           )->to('Dashboard::Network#list')->name('list_networks');
