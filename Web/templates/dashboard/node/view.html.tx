@@ -30,7 +30,7 @@
         adoption.</p>
 
         <pre>
-            curl -O -H 'X-Auth: [% $c.stash.person.create_auth_token %]' [% $c.url_for( '/download/' ~ $pending ).to_abs %]
+            curl -O -H 'X-Auth: [% $c.stash.person.create_auth_token %]' [% $c.url_for( 'secure_file', 'filename', $pending ).to_abs %]
             tar -xzf [% $pending %]
             cd nebula
 

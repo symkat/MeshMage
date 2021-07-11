@@ -30,7 +30,7 @@ CREATE TABLE auth_password (
 
 CREATE TABLE auth_token (
     id                          serial          PRIMARY KEY,
-    person_id                   int             not null unique references person(id),
+    person_id                   int             not null references person(id),
     token                       text            not null,
     created_at                  timestamptz     not null default current_timestamp
 );

@@ -112,7 +112,7 @@ sub startup ($self) {
             filepath => $filepath,
             filename => $c->param('filename'),
         );
-    });
+    })->name( 'secure_file' );
 
     # Send requests for / to the dashboard.
     $auth->get('/')->to(cb => sub ($c) {

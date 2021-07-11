@@ -139,7 +139,7 @@ sub register ( $self, $app, $config ) {
         Mojo::File->new( "$etc_path/Nebula.plist"       )->copy_to( $dir                );
 
         # my $outfile = $job->app->filepath_for( nebula => $net_id, "${domain}_macos_intel.tgz" )VC
-        my $outfile = $job->app->download_dir . "${domain}_macos.tgz";
+        my $outfile = $job->app->files_dir . "/secure_download/${domain}_macos.tgz";
 
         my $command = [qw( tar -C ), $tempdir, '-czf', $outfile, 'nebula' ];
         run3( $command );
