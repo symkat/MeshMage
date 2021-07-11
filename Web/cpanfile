@@ -1,5 +1,6 @@
 requires 'Minion';
 requires 'Mojolicious::Plugin::XslateRenderer';
+requires 'Mojolicious::Plugin::RenderFile';
 requires 'Mojo::Pg';
 requires 'MeshMage::DB';
 requires 'Net::Subnet';

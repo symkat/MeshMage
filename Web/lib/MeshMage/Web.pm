@@ -40,8 +40,10 @@ sub startup ($self) {
 
     # Setup Plugins
     $self->plugin( Minion => { Pg => 'postgresql://minion:minion@localhost:5433/minion' } );
+    $self->plugin( 'RenderFile' );
     $self->plugin( 'MeshMage::Web::Plugin::MinionTasks' );
     $self->plugin( 'MeshMage::Web::Plugin::Helpers' );
+
     
     # Standard router.
     my $r = $self->routes;
@@ -49,6 +51,15 @@ sub startup ($self) {
     # Create a router chain that ensures the request is from an authenticated
     # user.
     my $auth = $r->under( '/' => sub ($c) {
+
+        # Hax: by-pass authentication with an X-Auth header.
+        #
+        # TODO: Add a bit to the DB so we can make values for
+        # an X-Auth when users are given the chance to download
+        # things with keys and such.
+        if ( $c->req->headers->header('X-Auth') ) {
+            return 1;
+        }
 
         # Login via session cookie.
         if ( $c->session('uid') ) {
@@ -76,6 +87,23 @@ sub startup ($self) {
     # The /minion stuff is handled here because we needed to place it under $auth.
     $self->plugin( 'Minion::Admin' => { route => $auth->under( '/minion' ) } );
     
+    # A secure static file area, the user will need to be authenticated.
+    $auth->get('/secure/#filename')->to( cb => sub ($c) {
+
+        my $filepath = sprintf( "%s/secure_download/%s", $c->files_dir, $c->param('filename') );
+
+        if ( ! -e $filepath ) {
+            $c->res->code( 404 );
+            $c->render( text => "No such file or directory.\n" );
+            return;
+        }
+
+        $c->render_file(
+            filepath => $filepath,
+            filename => $c->param('filename'),
+        );
+    });
+
     # Send requests for / to the dashboard.
     $auth->get('/')->to(cb => sub ($c) {
         $c->redirect_to( $c->url_for('dashboard') ) 
