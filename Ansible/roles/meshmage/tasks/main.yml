@@ -1,0 +1,122 @@
+---
+- name: Update all packages to their latest version
+  apt:
+    name: "*"
+    state: latest
+    update_cache: yes
+
+- name: Install packages for key exchange.
+  apt:
+    name: ['apt-transport-https', 'ca-certificates', 'curl', 'gnupg', 'lsb-release']
+    state: present
+
+- name: Add the ansible key.
+  ansible.builtin.apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: 93C4A3FD7BB9C367
+
+- name: Install ansible.list for apt.
+  copy:
+    dest: /etc/apt/sources.list.d/ansible.list
+    content: "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Install packages
+  apt:
+    name: [ 'ansible', 'git', 'build-essential', 'libpq-dev', 'libssl-dev', 'libz-dev', 
+      'cpanminus', 'liblocal-lib-perl', 'kitty-terminfo' ] 
+    state: present
+
+- name: Create meshmage user
+  user:
+    name: meshmage
+    shell: /bin/bash
+    comment: MeshMage User Account
+
+- name: Create ~meshmage/.ssh
+  file:
+    state: directory
+    path: /home/meshmage/.ssh
+    owner: meshmage
+    group: meshmage
+    mode: 0700
+
+- name: Create ~meshmage/.ssh/authorized_keys from ~root
+  copy:
+    dest: /home/meshmage/.ssh/authorized_keys
+    src: "/root/.ssh/authorized_keys"
+    remote_src: true
+    owner: meshmage
+    group: meshmage
+    mode: 0600
+
+- name: Setup local::lib for meshmage.
+  lineinfile:
+    path: /home/meshmage/.bashrc
+    line: 'eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"'
+    create: yes
+
+- name: Install perl modules
+  shell: source /home/meshmage/.bashrc && cpanm App::plx App::opan App::Dex Carton Dist::Zilla
+  args:
+    chdir: /home/meshmage
+    executable: /bin/bash
+  become: true
+  become_user: meshmage
+
+- name: Checkout meshmage repo.
+  shell: GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone https://github.com/symkat/MeshMage.git
+  args:
+    creates: /home/meshmage/MeshMage
+    chdir: /home/meshmage
+    executable: /bin/bash
+  become: true
+  become_user: meshmage
+
+- name: Build MeshMage::DB
+  shell: dzil build
+  args:
+    chdir: /home/meshmage/MeshMage/DB
+    executable: /bin/bash
+  environment:
+    PERL_MB_OPT: "--install_base \"/home/meshmage/perl5\""
+    PERL_MM_OPT: "INSTALL_BASE=/home/meshmage/perl5"
+    PERL5LIB: "/home/meshmage/perl5/lib/perl5"
+    PATH: "/home/meshmage/perl5/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"
+  become: true
+  become_user: meshmage
+
+- name: Configure plx for MeshMage::Web
+  shell: |
+    plx --init
+    plx --config libspec add 00tilde.ll $HOME/perl5
+    plx --config libspec add 40dblib.dir ../DB/lib
+    plx opan init
+    plx opan add ../DB/MeshMage-DB-0.001.tar.gz
+    plx opan merge
+  args:
+    creates: /home/meshmage/MeshMage/MeshMage/Web/.plx
+    chdir: /home/meshmage/MeshMage/Web
+    executable: /bin/bash
+  environment:
+    PERL_MB_OPT: "--install_base \"/home/meshmage/perl5\""
+    PERL_MM_OPT: "INSTALL_BASE=/home/meshmage/perl5"
+    PERL5LIB: "/home/meshmage/perl5/lib/perl5"
+    PATH: "/home/meshmage/perl5/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"
+  become: true
+  become_user: meshmage
+
+- name: Install dependancies for MeshMage::Web
+  shell: plx opan carton install
+  args:
+    chdir: /home/meshmage/MeshMage/Web
+  environment:
+    PERL_MB_OPT: "--install_base \"/home/meshmage/perl5\""
+    PERL_MM_OPT: "INSTALL_BASE=/home/meshmage/perl5"
+    PERL5LIB: "/home/meshmage/perl5/lib/perl5"
+    PATH: "/home/meshmage/perl5/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"
+  become: true
+  become_user: meshmage
+
