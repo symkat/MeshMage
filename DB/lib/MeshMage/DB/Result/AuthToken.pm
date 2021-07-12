@@ -95,20 +95,6 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key("id");
 
-=head1 UNIQUE CONSTRAINTS
-
-=head2 C<auth_token_person_id_key>
-
-=over 4
-
-=item * L</person_id>
-
-=back
-
-=cut
-
-__PACKAGE__->add_unique_constraint("auth_token_person_id_key", ["person_id"]);
-
 =head1 RELATIONS
 
 =head2 person
@@ -127,8 +113,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-07-11 18:07:01
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:1BXRREU/QkgGzGSvVHgXmQ
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-07-12 02:16:11
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:hOZOmNbU8UxVagjqbFC9cg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

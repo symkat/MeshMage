@@ -133,16 +133,16 @@ __PACKAGE__->might_have(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
-=head2 auth_token
+=head2 auth_tokens
 
-Type: might_have
+Type: has_many
 
 Related object: L<MeshMage::DB::Result::AuthToken>
 
 =cut
 
-__PACKAGE__->might_have(
-  "auth_token",
+__PACKAGE__->has_many(
+  "auth_tokens",
   "MeshMage::DB::Result::AuthToken",
   { "foreign.person_id" => "self.id" },
   { cascade_copy => 0, cascade_delete => 0 },
@@ -164,8 +164,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-07-11 18:07:01
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:3ByecdkS9MdtdGywmEse+g
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-07-12 02:16:11
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:H3v3Wga1gwbF8rDIOTGqKw
 use Data::GUID;
 
 sub setting {
