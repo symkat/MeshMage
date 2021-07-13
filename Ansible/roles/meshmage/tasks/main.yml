@@ -228,6 +228,30 @@
   become: true
   become_user: meshmage
 
-# Setup services files for meshmage
+- name: Install meshmage.service file.
+  copy:
+    dest: /etc/systemd/system/meshmage.service
+    src: "{{ role_path }}/files/meshmage.service"
+    owner: root
+    group: root
+    mode: 0644
 
-# Enable services for meshmage web / worker
+- name: Install meshmage-worker.service file.
+  copy:
+    dest: /etc/systemd/system/meshmage-worker.service
+    src: "{{ role_path }}/files/meshmage-worker.service"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Start MeshMage
+  service:
+    name: meshmage
+    state: started
+    enabled: true
+
+- name: Start MeshMage-Worker
+  service:
+    name: meshmage-worker
+    state: started
+    enabled: true

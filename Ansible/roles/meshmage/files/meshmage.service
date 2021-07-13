@@ -1,0 +1,17 @@
+[Unit]
+Description=MeshMage Web Service
+After=network.target
+
+[Service]
+ExecStart=/home/meshmage/perl5/bin/plx ./script/meshmage_web daemon
+Restart=on-failure
+User=meshmage
+Group=meshmage
+WorkingDirectory=/home/meshmage/MeshMage/Web
+Environment="PERL_MB_OPT=--install_base \"/home/meshmage/perl5\""
+Environment="PERL_MM_OPT=INSTALL_BASE=/home/meshmage/perl5"
+Environment="PERL5LIB=/home/meshmage/perl5/lib/perl5"
+Environment="PATH=/home/meshmage/perl5/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"
+
+[Install]
+WantedBy=multi-user.target
