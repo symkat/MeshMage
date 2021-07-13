@@ -1,0 +1,5 @@
+postgresql_user: meshmage
+postgresql_password: meshmage
+postgresql_databases:
+  - name: minion
+  - name: meshmage

@@ -7,7 +7,13 @@
 
 - name: Install packages for key exchange.
   apt:
-    name: ['apt-transport-https', 'ca-certificates', 'curl', 'gnupg', 'lsb-release']
+    name: [
+      'apt-transport-https',
+      'ca-certificates',
+      'curl',
+      'gnupg',
+      'lsb-release'
+    ]
     state: present
 
 - name: Add the ansible key.
@@ -25,8 +31,17 @@
 
 - name: Install packages
   apt:
-    name: [ 'ansible', 'git', 'build-essential', 'libpq-dev', 'libssl-dev', 'libz-dev', 
-      'cpanminus', 'liblocal-lib-perl', 'kitty-terminfo' ] 
+    name: [
+      'ansible',
+      'git',
+      'build-essential',
+      'libpq-dev',
+      'libssl-dev',
+      'libz-dev',
+      'cpanminus',
+      'liblocal-lib-perl',
+      'kitty-terminfo',
+    ]
     state: present
 
 - name: Create meshmage user
@@ -46,7 +61,7 @@
 - name: Create ~meshmage/.ssh/authorized_keys from ~root
   copy:
     dest: /home/meshmage/.ssh/authorized_keys
-    src: "/root/.ssh/authorized_keys"
+    src: /root/.ssh/authorized_keys
     remote_src: true
     owner: meshmage
     group: meshmage
@@ -58,20 +73,30 @@
     line: 'eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"'
     create: yes
 
-- name: Install perl modules
-  shell: source /home/meshmage/.bashrc && cpanm App::plx App::opan App::Dex Carton Dist::Zilla
+- name: Install perl modules (up to 3 tries)
+  shell: cpanm App::plx App::opan App::Dex Carton Dist::Zilla
   args:
     chdir: /home/meshmage
     executable: /bin/bash
+  environment:
+    PERL_MB_OPT: "--install_base \"/home/meshmage/perl5\""
+    PERL_MM_OPT: "INSTALL_BASE=/home/meshmage/perl5"
+    PERL5LIB: "/home/meshmage/perl5/lib/perl5"
+    PATH: "/home/meshmage/perl5/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"
+  retries: 3
+  register: result
+  until: result.rc == 0
   become: true
   become_user: meshmage
 
 - name: Checkout meshmage repo.
-  shell: GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone https://github.com/symkat/MeshMage.git
+  shell: git clone https://github.com/symkat/MeshMage.git
   args:
     creates: /home/meshmage/MeshMage
     chdir: /home/meshmage
     executable: /bin/bash
+  environment:
+    GIT_SSH_COMMAND: "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
   become: true
   become_user: meshmage
 
@@ -88,13 +113,29 @@
   become: true
   become_user: meshmage
 
+- name: Install MeshMage::DB
+  shell: cpanm MeshMage-DB-1.tar.gz
+  args:
+    chdir: /home/meshmage/MeshMage/DB
+    executable: /bin/bash
+  environment:
+    PERL_MB_OPT: "--install_base \"/home/meshmage/perl5\""
+    PERL_MM_OPT: "INSTALL_BASE=/home/meshmage/perl5"
+    PERL5LIB: "/home/meshmage/perl5/lib/perl5"
+    PATH: "/home/meshmage/perl5/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"
+  retries: 3
+  register: result
+  until: result.rc == 0
+  become: true
+  become_user: meshmage
+
 - name: Configure plx for MeshMage::Web
   shell: |
     plx --init
     plx --config libspec add 00tilde.ll $HOME/perl5
     plx --config libspec add 40dblib.dir ../DB/lib
     plx opan init
-    plx opan add ../DB/MeshMage-DB-0.001.tar.gz
+    plx opan add ../DB/MeshMage-DB-1.tar.gz
     plx opan merge
   args:
     creates: /home/meshmage/MeshMage/MeshMage/Web/.plx
@@ -117,6 +158,76 @@
     PERL_MM_OPT: "INSTALL_BASE=/home/meshmage/perl5"
     PERL5LIB: "/home/meshmage/perl5/lib/perl5"
     PATH: "/home/meshmage/perl5/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"
+  retries: 3
+  register: result
+  until: result.rc == 0
   become: true
   become_user: meshmage
 
+# Setup the databases
+
+- name: Install Database Packages
+  apt:
+    name: [
+      'postgresql-client',
+      'postgresql-contrib',
+      'postgresql',
+      'python-psycopg2',
+    ]
+    state: present
+
+- name: start postgresql
+  service: name=postgresql state=started enabled=true
+
+- name: Create PSQL user account.
+  postgresql_user:
+    name: "{{ postgresql_user }}"
+    password: "{{ postgresql_password }}"
+    state: present
+  become_user: postgres
+  become: true
+
+- name: Create PSQL databases
+  postgresql_db:
+    name: "{{ item.name }}"
+    owner: "{{ postgresql_user }}"
+    state: present
+  become_user: postgres
+  become: true
+  with_items: "{{ postgresql_databases }}"
+  register: postgresql_create_database
+
+- name: Enable citext on meshmage DB
+  postgresql_query:
+    db: meshmage
+    query: CREATE EXTENSION IF NOT EXISTS citext
+  become_user: postgres
+  become: true
+
+- name: Write Database DDL
+  shell: ./bin/meshmage-db-deploy write_ddl
+  args:
+    chdir: /home/meshmage/MeshMage/DB
+  environment:
+    PERL_MB_OPT: "--install_base \"/home/meshmage/perl5\""
+    PERL_MM_OPT: "INSTALL_BASE=/home/meshmage/perl5"
+    PERL5LIB: "/home/meshmage/perl5/lib/perl5"
+    PATH: "/home/meshmage/perl5/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"
+  become: true
+  become_user: meshmage
+
+- name: Install Database DDL
+  shell: ./bin/meshmage-db-deploy install
+  args:
+    chdir: /home/meshmage/MeshMage/DB
+  environment:
+    PERL_MB_OPT: "--install_base \"/home/meshmage/perl5\""
+    PERL_MM_OPT: "INSTALL_BASE=/home/meshmage/perl5"
+    PERL5LIB: "/home/meshmage/perl5/lib/perl5"
+    PATH: "/home/meshmage/perl5/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"
+  become: true
+  become_user: meshmage
+
+# Setup services files for meshmage
+
+# Enable services for meshmage web / worker
