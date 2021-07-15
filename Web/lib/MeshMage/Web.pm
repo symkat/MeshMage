@@ -26,10 +26,9 @@ sub startup ($self) {
     # Set the cookie expires to 30 days.
     $self->sessions->default_expiration(2592000);
 
-    my $db = MeshMage::DB->connect(
-        'dbi:Pg:host=localhost;dbname=meshmage', 'meshmage', 'meshmage'
-    );
-    $self->helper( db => sub { return $db } );
+    $self->helper( db => sub { 
+        return state $db = MeshMage::DB->connect($config->{database}->{meshmage});
+    } );
 
     # The location we'll stick files for download.
     $self->helper( download_dir => sub {
@@ -40,7 +39,7 @@ sub startup ($self) {
     });
 
     # Setup Plugins
-    $self->plugin( Minion => { Pg => 'postgresql://minion:minion@localhost:5433/minion' } );
+    $self->plugin( Minion => { Pg => $config->{database}->{minion} } );
     $self->plugin( 'RenderFile' );
     $self->plugin( 'MeshMage::Web::Plugin::MinionTasks' );
     $self->plugin( 'MeshMage::Web::Plugin::Helpers' );

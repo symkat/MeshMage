@@ -2,6 +2,11 @@
 secrets:
   - Random String To Use For Mojolicious Secrets
 
+# PSQL credentials.
+database:
+  meshmage: postgresql://meshmage:meshmage@localhost/meshmage
+  minion:   postgresql://minion:minion@localhost:5433/minion
+
 # store: The directory that contains the nebula binaries.
 # use:   The platform that MeshMage is running on.
 nebula:
