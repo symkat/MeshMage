@@ -1,4 +1,14 @@
 ---
+- name: Create secret for cookie encryption.
+  set_fact:
+    meshmage_secret: "{{ lookup('password', '/dev/null chars=hexdigits length=40') }}"
+  when: meshmage_secret is undefined
+
+- name: Create postgres password.
+  set_fact:
+    postgresql_password: "{{ lookup('password', '/dev/null chars=ascii_letters,digits length=32') }}"
+  when: postgresql_password is undefined
+
 - name: Update all packages to their latest version
   apt:
     name: "*"
@@ -204,6 +214,11 @@
   become_user: postgres
   become: true
 
+- name: Check if Database DDL Exists
+  stat:
+    path: /home/meshmage/MeshMage/DB/share/ddl/_source/deploy/1/001-auto.yml
+  register: db_ddl
+
 - name: Write Database DDL
   shell: ./bin/meshmage-db-deploy write_ddl
   args:
@@ -215,6 +230,7 @@
     PATH: "/home/meshmage/perl5/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"
   become: true
   become_user: meshmage
+  when: db_ddl.stat.exists == false
 
 - name: Install Database DDL
   shell: ./bin/meshmage-db-deploy install
@@ -227,6 +243,15 @@
     PATH: "/home/meshmage/perl5/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"
   become: true
   become_user: meshmage
+  when: db_ddl.stat.exists == false
+
+- name: Install meshmage.yml file.
+  template:
+    src: "{{ role_path }}/templates/meshmage.yml.j2"
+    dest: /home/meshmage/MeshMage/Web/meshmage.yml
+    owner: meshmage
+    group: meshmage
+    mode: '0640'
 
 - name: Install meshmage.service file.
   copy:

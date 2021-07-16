@@ -1,5 +1,6 @@
 postgresql_user: meshmage
 postgresql_password: meshmage
+postgresql_host: localhost
 postgresql_databases:
   - name: minion
   - name: meshmage

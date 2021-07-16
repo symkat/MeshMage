@@ -1,0 +1,19 @@
+---
+secrets:
+  - {{ meshmage_secret }}
+
+database:
+  meshmage: postgresql://{{ postgresql_user }}:{{ postgresql_password }}@{{ postgresql_host }}/meshmage
+  minion: postgresql://{{ postgresql_user }}:{{ postgresql_password }}@{{ postgresql_host }}/minion
+
+nebula:
+  store: /home/symkat/Code/MeshMage/.nebula
+  use: linux/amd64
+
+ansible:
+  rundir: /home/symkat/Code/MeshMage/Ansible
+
+filestore:
+  prefix: /home/symkat/Code/MeshMage/data
+  sshkey: sshkeys
+  nebula: nebula
