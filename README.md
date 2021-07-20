@@ -19,6 +19,12 @@ The installation process usually takes about 30 minutes to run.
 
 ### Creating the first user account
 
+Once MeshMage is installed, you can access it over http and you will be directed to create the initial user account.  The initial user account can be created without any authentication.
+
+![User Init Page](https://raw.githubusercontent.com/symkat/MeshMage/master/docs/assets/init_user.png)
+
+Enter your name, email address and password.  Your email address and password will be used as the login information and click *Create Account*.  If there are no errors, your account will be created and you will be logged into MeshMage.
+
 ### Creating a network
 
 ### Creating a node
