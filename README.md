@@ -1,3 +1,38 @@
+## Guide
+
+### Installation
+
+MeshMage can be fully installed and configured with Ansible.  From a machine with Ansible and git installed, fork MeshMage and go into the Ansible directory.
+
+```bash
+git clone https://github.com/symkat/MeshMage.git
+cd MeshMage/Ansible
+```
+
+MeshMage should be installed on a Debian 10 machine.  You will need ssh access to `root@` on the target node for Ansible to access it.  Replace the IP address `10.0.0.1` with the IP address of your Debian 10 machine; don't remove the comma inside the single-quotes.
+
+```bash
+ansible-playbook -i '10.0.0.1,' playbooks/install-meshmage.yml
+```
+
+The installation process usually takes about 30 minutes to run.
+
+### Creating the first user account
+
+### Creating a network
+
+### Creating a node
+
+### Creating an SSH key
+
+### Setting up a Linux node
+
+### Setting up a macOS node
+
+### Setting up a Windows node
+
+---
+
 ## Setting Up Development Environment
 
 ### Debian 10
@@ -56,8 +91,7 @@ The previous 4 steps were all done as root.  For this step, you'll need to login
 
 ```bash
 cpanm App::plx App::opan App::Dex Carton Dist::Zilla
-GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
-    git clone git@github.com:symkat/MeshMage.git
+git clone https://github.com/symkat/MeshMage.git
 cd MeshMage/DB
 dzil build
 cd ../Web
@@ -65,12 +99,16 @@ plx --init
 plx --config libspec add 00tilde.ll $HOME/perl5
 plx --config libspec add 40dblib.dir ../DB/lib
 plx opan init
-plx opan add ../DB/MeshMage-DB-0.001.tar.gz
+plx opan add ../DB/MeshMage-DB-1.tar.gz
 plx opan merge
 plx opan carton install
 ```
 
 Now you will want to copy Web/meshmage.yml.sample to Web/meshmage.yml and fill out the config file.
+
+```bash
+cp Web/meshmage.yml.sample Web/meshmage.yml
+```
 
 6. Run The App
 

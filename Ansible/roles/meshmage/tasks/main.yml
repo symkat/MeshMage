@@ -27,7 +27,7 @@
     state: present
 
 - name: Add the ansible key.
-  ansible.builtin.apt_key:
+  apt_key:
     keyserver: keyserver.ubuntu.com
     id: 93C4A3FD7BB9C367
 
