@@ -40,6 +40,6 @@
     <p>Once you have defined the node, you can use manual or automatic deployment to join it to the
     network and connections with other nodes.</p>
 
-    <p>You can click the <a href="[% $c.url_for( '/node' ) %]" title="Create Node"><span data-feather="plus-circle"></span></a>
+    <p>You can click the <a href="[% $c.url_for( 'new_node' ) %]" title="Create Node"><span data-feather="plus-circle"></span></a>
     icon here, or to the right of <strong>Nodes</strong> above to define a node.</p>
 %%  }

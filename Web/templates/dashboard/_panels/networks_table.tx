@@ -15,7 +15,7 @@
                 <td>[% $network.tld %]</td>
                 <td>[% $network.address %]</td>
                 <td>
-                    <a href="[% $c.url_for( 'create_node' ).query( network_id => $network.id ) %]"
+                    <a href="[% $c.url_for( 'new_node' ).query( network_id => $network.id ) %]"
                        title="Create Node"
                        ><span data-feather="hard-drive"></span></a>
                        &nbsp;
@@ -45,6 +45,6 @@
     <p>The IP range should be a private range that doesn't conflict with LANs you already use,
     perhaps <strong>192.168.25.1/24</strong>.
 
-    <p>You can click the <a href="[% $c.url_for( '/network' ) %]" title="Create Network"><span data-feather="plus-circle"></span></a>
+    <p>You can click the <a href="[% $c.url_for( 'new_network' ) %]" title="Create Network"><span data-feather="plus-circle"></span></a>
     icon here, or to the right of <strong>Networks</strong> above to define a network.</p>
 %% }

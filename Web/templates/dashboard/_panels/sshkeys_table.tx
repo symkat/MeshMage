@@ -31,6 +31,6 @@
     <p>You can either import an existing SSH Keypair, or one can be generated for you and you
     will need to add the public key to the node.</p>
 
-    <p>You can click the <a href="[% $c.url_for( '/sshkeys' ) %]" title="Create SSH Keys"><span data-feather="plus-circle"></span></a>
+    <p>You can click the <a href="[% $c.url_for( 'new_sshkey' ) %]" title="Create SSH Keys"><span data-feather="plus-circle"></span></a>
     icon here, or to the right of <strong>SSH Keys</strong> above to import or generate a keypair.</p>
 %%  }
