@@ -24,25 +24,31 @@
     </div>
 %%  }
 
-    <h2 style="margin-top: 2em" class="h2">Nodes
-        <a href="[% $c.url_for( 'new_node' ) %]" title="Create Node"><span data-feather="plus-circle"></span></a>
-        <a href="[% $c.url_for( 'list_nodes' ) %]" title="View Node List"><span data-feather="arrow-right"></span></a>
-    </h2>
-%%  include 'dashboard/_panels/nodes_table.tx'
+%%  if ( $networks.size() ) {
+        <h2 style="margin-top: 2em" class="h2">Nodes
+            <a href="[% $c.url_for( 'new_node' ) %]" title="Create Node"><span data-feather="plus-circle"></span></a>
+            <a href="[% $c.url_for( 'list_nodes' ) %]" title="View Node List"><span data-feather="arrow-right"></span></a>
+        </h2>
+%%      include 'dashboard/_panels/nodes_table.tx'
 
-    <h2 style="margin-top: 2em" class="h2">Networks
-        <a href="[% $c.url_for( 'new_network' ) %]" title="Create Network"><span data-feather="plus-circle"></span></a>
-        <a href="[% $c.url_for( 'list_networks' ) %]" title="View Network List"><span data-feather="arrow-right"></span></a>
-    </h2>
-%%  include 'dashboard/_panels/networks_table.tx'
+        <h2 style="margin-top: 2em" class="h2">Networks
+            <a href="[% $c.url_for( 'new_network' ) %]" title="Create Network"><span data-feather="plus-circle"></span></a>
+            <a href="[% $c.url_for( 'list_networks' ) %]" title="View Network List"><span data-feather="arrow-right"></span></a>
+        </h2>
+%%      include 'dashboard/_panels/networks_table.tx'
 
+        <h2 style="margin-top: 2em" class="h2">SSH Keys
+            <a href="[% $c.url_for( 'new_sshkey' ) %]" title="Create Keypair"><span data-feather="plus-circle"></span></a>
+            <a href="[% $c.url_for( 'list_sshkeys' ) %]" title="View SSH Keys List"><span data-feather="arrow-right"></span></a>
+        </h2>
+%%      include 'dashboard/_panels/sshkeys_table.tx'
+%%  } else {
+        <h2 style="margin-top: 2em" class="h2">Networks
+            <a href="[% $c.url_for( 'new_network' ) %]" title="Create Network"><span data-feather="plus-circle"></span></a>
+            <a href="[% $c.url_for( 'list_networks' ) %]" title="View Network List"><span data-feather="arrow-right"></span></a>
+        </h2>
+%%      include 'dashboard/_panels/networks_table.tx'
 
-    <h2 style="margin-top: 2em" class="h2">SSH Keys
-        <a href="[% $c.url_for( 'new_sshkey' ) %]" title="Create Keypair"><span data-feather="plus-circle"></span></a>
-        <a href="[% $c.url_for( 'list_sshkeys' ) %]" title="View SSH Keys List"><span data-feather="arrow-right"></span></a>
-    </h2>
-%%  include 'dashboard/_panels/sshkeys_table.tx'
-
-
+%% }
 
 %% }
