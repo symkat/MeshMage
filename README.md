@@ -27,6 +27,18 @@ Enter your name, email address and password.  Your email address and password wi
 
 ### Creating a network
 
+The first time you log into MeshMage the Dashboard will let you know you have no networks defined.  You'll see this prompt until you add a network.
+
+![Dashboard Page - No Network](https://raw.githubusercontent.com/symkat/MeshMage/master/docs/assets/init_dashboard.png)
+
+Each Network has a name, top-level domain, and IP range.  Each Network has its own encryption certificates.  Once a network is created, nodes -- laptops, VMs, cloud machines --  can be added to the network.  Click the plus sign to create your first network.
+
+![New Network](https://raw.githubusercontent.com/symkat/MeshMage/master/docs/assets/new_network.png)
+
+
+
+#### Setting up DNS
+
 ### Creating a node
 
 ### Creating an SSH key
