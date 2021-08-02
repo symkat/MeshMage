@@ -35,6 +35,15 @@ Each Network has a name, top-level domain, and IP range.  Each Network has its o
 
 ![New Network](https://raw.githubusercontent.com/symkat/MeshMage/master/docs/assets/new_network.png)
 
+For this example, we will create a network for modFoss.  The IP range will be 192.168.10.1 to 192.168.10.255 for all of the nodes on the network.  The network TLD will be set to mn.modfoss.net, so each node will have a DNS entry for nodename.mn.modfoss.net.
+
+![New Network - Filled](https://raw.githubusercontent.com/symkat/MeshMage/master/docs/assets/new_network_filled.png)
+
+After clicking *Create Network*, the network will be added to MeshMage and nodes can be created for it.
+
+![New Network - Done](https://raw.githubusercontent.com/symkat/MeshMage/master/docs/assets/new_network_finish.png)
+
+#### Adding a Lighthouse
 
 
 #### Setting up DNS
