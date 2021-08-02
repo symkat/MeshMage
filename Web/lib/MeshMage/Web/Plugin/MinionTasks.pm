@@ -173,6 +173,36 @@ sub register ( $self, $app, $config ) {
 
         run3( $command );
     });
+
+    $app->minion->add_task( deploy_node => sub ( $job, $node_id, $key_id, $deploy_ip, $platform ) {
+        my $node = $job->app->db->resultset('Node')->find( $node_id );
+        my @lighthouses = $node->network->search_related( 'nodes', { is_lighthouse => 1 } );
+
+        my $playbook = File::Temp->new(
+            TEMPLATE => 'playbook-XXXX',
+            SUFFIX   => '.yml',
+            UNLINK   => 0,
+            DIR      => $job->app->config->{ansible}{rundir},
+        );
+
+        # Create a nebula config file for this domain so that Ansible may use
+        # the file.
+        Mojo::File->new( $job->app->filepath_for( nebula => $node->network->id, $node->hostname . '.yml' ))
+            ->spurt( $job->app->templated_file( 'nebula_config.yml', node => $node ));
+
+        print $playbook $job->app->templated_file( 'ansible-playbook.yml',
+            node     => $node,
+            app      => $job->app,
+            platform => $platform
+        );
+        $playbook->flush;
+        close $playbook;
+
+        run3([ 'ansible-playbook', '-i', "$deploy_ip,",
+            '--key-file', $job->app->filepath_for( sshkey => $key_id ),
+             $playbook->filename
+        ]);
+    });
 }
 
 1;
