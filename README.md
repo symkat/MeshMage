@@ -45,6 +45,42 @@ After clicking *Create Network*, the network will be added to MeshMage and nodes
 
 #### Adding a Lighthouse
 
+A Lighthouse node provides DNS services for the network and facilitates nodes behind NATs to talking to one another.  Each Network should have at least one lighthouse node.
+
+Let's create a Lighthouse node for the modFoss network and call it lighthouse.mn.modfoss.net.  Nodes can be added by clicking *Create Node* on the sidebar, or clicking the node icon under the Network's *Actions* column.
+
+![New Node](https://raw.githubusercontent.com/symkat/MeshMage/master/docs/assets/new_node.png)
+
+When adding the node, first we select the network for the node.  This node will be a lighthouse, so we check the box to declare it as one.  The housename will be lighthouse.mn.modfoss.net, so we enter lighthouse as the hostname.  The IP address field will determine the IP address of the node on the MeshNet.  The Public IP is required for lighthouse nodes since they must be on the open internet to work.
+
+![New Node - Filled](https://raw.githubusercontent.com/symkat/MeshMage/master/docs/assets/new_node_filled.png)
+
+Once the node is created, we'll be brought to the node page for lighthouse.mn.modfoss.net and can deploy it.
+
+![New Node - Finished](https://raw.githubusercontent.com/symkat/MeshMage/master/docs/assets/new_node_finished.png)
+
+#### Deploy Lighthouse
+
+The step above created the keys and configuration for the Lighthouse node, however it hasn't been set up.  The node is a Debian 10 VM, and we will want to automatically configure it.  Before doing that, we need to create an SSH Key.  We'll click *Create SSH Key* and have MeshMage generate one for us.
+
+![New SSHKey](https://raw.githubusercontent.com/symkat/MeshMage/master/docs/assets/new_sshkey.png)
+
+After clicking *Create SSH Key*, we'll be brought back to the dashboard:
+
+![New SSHKey - Dashboard](https://raw.githubusercontent.com/symkat/MeshMage/master/docs/assets/new_sshkey_dashboard.png)
+
+Refresh the page and we'll see the key had been created.  We can click the arrow to view the key.
+
+![New SSHKey - Dashboard - Done](https://raw.githubusercontent.com/symkat/MeshMage/master/docs/assets/new_sshkey_dashboard_done.png)
+
+We'll want to ensure that the SSH key is installed to `root@` on the lighthouse machine.  Once that is done, we'll return to the Dashboard, and click the arrow on the node, then select Linux - Automatic Deployment and click *Let's Do It*.
+
+![Deploy Lighthouse](https://raw.githubusercontent.com/symkat/MeshMage/master/docs/assets/deploy_lighthouse.png)
+
+We'll need to select to target platform.  We're using a Linux machine with an x86\_64 processor, so we'll select *linux/amd64* and click *Install Nebula*.
+
+![Deploy Lighthouse - Automatic](https://raw.githubusercontent.com/symkat/MeshMage/master/docs/assets/deploy_lighthouse_auto.png)
+
 
 #### Setting up DNS
 
