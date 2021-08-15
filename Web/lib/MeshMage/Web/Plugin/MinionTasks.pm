@@ -92,6 +92,9 @@ sub register ( $self, $app, $config ) {
                 Mojo::File->new($job->app->filepath_for(sshkey => $key->id         ))->spurt($private_key);
                 Mojo::File->new($job->app->filepath_for(sshkey => $key->id . '.pub'))->spurt($public_key );
 
+                Mojo::File->new($job->app->filepath_for(sshkey => $key->id         ))->chmod(0600);
+                Mojo::File->new($job->app->filepath_for(sshkey => $key->id . '.pub'))->chmod(0600);
+
                 return 1;
             });
         } catch {
@@ -201,7 +204,10 @@ sub register ( $self, $app, $config ) {
         run3([ 'ansible-playbook', '-i', "$deploy_ip,",
             '--key-file', $job->app->filepath_for( sshkey => $key_id ),
              $playbook->filename
-        ]);
+        ], undef, \my $stdout, \my $stderr );
+
+        $job->finish( [ 'STDOUT:', split(/\n/, $stdout ), 'STDERR:', split( /\n/, $stderr )  ] )
+
     });
 }
 

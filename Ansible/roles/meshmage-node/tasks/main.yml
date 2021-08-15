@@ -55,3 +55,8 @@
     group: root
     mode: 0644
 
+- name: Start & Enable Nebula
+  service:
+    name: nebula
+    state: started
+    enabled: true
