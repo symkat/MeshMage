@@ -12,7 +12,7 @@ cd MeshMage/Ansible
 MeshMage should be installed on a Debian 10 machine.  You will need ssh access to `root@` on the target node for Ansible to access it.  Replace the IP address `10.0.0.1` with the IP address of your Debian 10 machine; don't remove the comma inside the single-quotes.
 
 ```bash
-ansible-playbook -i '10.0.0.1,' playbooks/install-meshmage.yml
+ansible-playbook -i '10.0.0.1,' install-meshmage.yml
 ```
 
 The installation process usually takes about 30 minutes to run.
