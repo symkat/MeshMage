@@ -7,13 +7,13 @@ database:
   minion: postgresql://{{ postgresql_user }}:{{ postgresql_password }}@{{ postgresql_host }}/minion
 
 nebula:
-  store: /home/symkat/Code/MeshMage/.nebula
+  store: /home/meshmage/MeshMage/.nebula
   use: linux/amd64
 
 ansible:
-  rundir: /home/symkat/Code/MeshMage/Ansible
+  rundir: /home/meshmage/MeshMage/Ansible
 
 filestore:
-  prefix: /home/symkat/Code/MeshMage/data
+  prefix: /home/meshmage/MeshMage/data
   sshkey: sshkeys
   nebula: nebula
