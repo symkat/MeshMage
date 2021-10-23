@@ -1,0 +1,26 @@
+---
+secrets:
+  - Random String To Use For Mojolicious Secrets
+
+# PSQL credentials.
+database:
+  meshmage: postgresql://meshmage:meshmage@database/meshmage
+  minion:   postgresql://minion:minion@miniondb/minion
+
+# store: The directory that contains the nebula binaries.
+# use:   The platform that MeshMage is running on.
+nebula:
+  store: /home/meshmage/MeshMage/.nebula
+  use: linux/amd64
+
+# rundir: The directory to run ansible-playbook in.
+ansible:
+  rundir: /home/meshmage/MeshMage/Ansible
+
+# prefix: top-level directory to store files in.
+# sshkey: directory for ssh priv/pub keypairs.
+# nebula: directory for nebula key/crt/yml files.
+filestore:
+  prefix: /home/meshmage/MeshMage/data
+  sshkey: sshkeys
+  nebula: nebula

@@ -21,3 +21,28 @@
       desc: "Grab a shell to psql"
       shell:
         - docker exec -ti meshmage-db psql -U meshmage meshmage
+- name: docker
+  desc: "Run Docker Container Environment (Web + Worker + DBs)"
+  children:
+    - name: start
+      desc: "Start Docker Container Environment"
+      shell:
+        - docker-compose --project-directory ./ -f ./.docker/meshmage.yml up
+    - name: stop
+      desc: "Stop Docker Container Environment"
+      shell:
+        - docker-compose --project-directory ./ -f ./.docker/meshmage.yml down
+    - name: status
+      desc: "Show status of Docker Container Environment"
+      shell:
+        - docker-compose --project-directory ./ -f ./.docker/meshmage.yml ps
+    - name: reset
+      desc: "Wipe data from Docker Container Environment"
+      shell:
+        - docker-compose --project-directory ./ -f ./.docker/meshmage.yml down -v
+
+
+- name: build
+  desc: "Build MeshMage docker image."
+  shell:
+    - docker build . -t symkat/meshmage -f .docker/meshmage.dockerfile

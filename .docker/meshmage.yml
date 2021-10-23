@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  website:
+    image: symkat/meshmage:latest
+    container_name: meshmage-web
+    ports:
+        - 3000:3000
+    environment:
+      PERL5LIB:            '/home/meshmage/perl5/lib/perl5'
+      PERL_MB_OPT:         '--install_base "/home/meshmage/perl5"'
+      PERL_MM_OPT:         'INSTALL_BASE=/home/meshmage/perl5'
+      PERL_LOCAL_LIB_ROOT: '/home/meshmage/perl5'
+    volumes:
+      - .:/home/meshmage/MeshMage
+      - ./.docker/config/meshmage.yml:/home/meshmage/MeshMage/Web/meshmage.yml
+    command: ./script/meshmage_web daemon
+    working_dir: /home/meshmage/MeshMage/Web
+  worker:
+    image: symkat/meshmage:latest
+    container_name: meshmage-worker
+    environment:
+      PERL5LIB:            '/home/meshmage/perl5/lib/perl5'
+      PERL_MB_OPT:         '--install_base "/home/meshmage/perl5"'
+      PERL_MM_OPT:         'INSTALL_BASE=/home/meshmage/perl5'
+      PERL_LOCAL_LIB_ROOT: '/home/meshmage/perl5'
+    volumes:
+      - .:/home/meshmage/MeshMage
+      - ./.docker/config/meshmage.yml:/home/meshmage/MeshMage/Web/meshmage.yml
+    command: ./script/meshmage_web minion worker
+    working_dir: /home/meshmage/MeshMage/Web
+  database:
+    image: postgres:11
+    container_name: meshmage-db
+    environment:
+      - POSTGRES_PASSWORD=meshmage
+      - POSTGRES_USER=meshmage
+      - POSTGRES_DB=meshmage
+    volumes:
+      - ./DB/etc/schema.sql:/docker-entrypoint-initdb.d/000_schema.sql:ro
+      - database:/var/lib/postgresql/data
+  miniondb:
+    image: postgres:11
+    container_name: meshmage-miniondb
+    environment:
+      - POSTGRES_PASSWORD=minion
+      - POSTGRES_USER=minion
+      - POSTGRES_DB=minion
+    volumes:
+      - miniondb:/var/lib/postgresql/data
+
+volumes:
+  database:
+  miniondb:
